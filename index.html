@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPTV Master Pro</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --bg2: #141414;
+            --bg3: #1f1f1f;
+            --bg4: #2a2a2a;
+            --border: #333;
+            --text: #ffffff;
+            --text2: #a0a0a0;
+            --text3: #666;
+            --primary: #e50914;
+            --primary-hover: #ff1a25;
+            --secondary: #22c55e;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --warning: #f59e0b;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --font: 'Inter', system-ui, -apple-system, sans-serif;
+            --shadow: 0 8px 32px rgba(0,0,0,0.4);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg2); }
+        ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        ::selection { background: var(--primary); color: #fff; }
+
+        header {
+            background: rgba(10,10,10,0.95);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: -0.5px;
+            user-select: none;
+        }
+        .brand-icon {
+            width: 36px; height: 36px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        .brand em { font-style: normal; font-weight: 400; color: var(--text2); font-size: 0.9rem; margin-left: 4px; }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .btn-icon {
+            width: 40px; height: 40px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+        .btn-icon:hover { background: var(--bg4); color: var(--text); }
+        .badge {
+            position: absolute;
+            top: -4px; right: -4px;
+            background: var(--primary);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            min-width: 18px; height: 18px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+        }
+        .btn-icon { position: relative; }
+        .sync-indicator {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--secondary);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .main { flex: 1; display: flex; flex-direction: column; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 24px; width: 100%; }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 4px;
+            margin-bottom: 24px;
+            width: fit-content;
+        }
+        .tab {
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text2);
+            border: none;
+            background: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tab:hover { color: var(--text); background: var(--bg3); }
+        .tab.active { background: var(--primary); color: #fff; }
+        .tab i { font-size: 0.85rem; }
+
+        .input-section {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            animation: fadeUp 0.4s ease;
+        }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .input-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .input-header h3 { font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .input-row { display: flex; gap: 12px; flex-wrap: wrap; }
+        .input-field { flex: 1; min-width: 280px; position: relative; }
+        input, select, button { font-family: var(--font); border: none; border-radius: var(--radius-sm); }
+        input {
+            width: 100%; padding: 14px 16px 14px 44px;
+            background: var(--bg); color: var(--text);
+            border: 1px solid var(--border);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(229,9,20,0.15); }
+        .input-field i {
+            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+            color: var(--text3); font-size: 0.9rem; pointer-events: none;
+        }
+        .btn {
+            padding: 14px 24px; font-weight: 600; cursor: pointer;
+            transition: var(--transition);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 0.95rem; white-space: nowrap;
+        }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(229,9,20,0.3); }
+        .btn-ghost { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+        .btn-ghost:hover:not(:disabled) { background: var(--bg4); color: var(--text); }
+        .btn-secondary { background: var(--accent); color: #fff; }
+        .btn-secondary:hover:not(:disabled) { background: var(--accent-hover); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .options-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .toggle-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text2); cursor: pointer; user-select: none; }
+        .toggle { position: relative; width: 42px; height: 22px; background: var(--bg4); border-radius: 11px; transition: var(--transition); flex-shrink: 0; }
+        .toggle.on { background: var(--primary); }
+        .toggle::after {
+            content: ''; position: absolute; top: 3px; left: 3px;
+            width: 16px; height: 16px; background: #fff; border-radius: 50%;
+            transition: var(--transition);
+        }
+        .toggle.on::after { left: 23px; }
+
+        .recent-list { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+        .recent-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 14px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.85rem;
+        }
+        .recent-item:hover { border-color: var(--primary); background: var(--bg3); }
+        .recent-item .url { flex: 1; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recent-item .count { color: var(--text3); font-size: 0.75rem; }
+        .recent-item .del { color: var(--text3); cursor: pointer; padding: 4px; }
+        .recent-item .del:hover { color: var(--primary); }
+
+        .status-bar {
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--text2);
+        }
+        .status-bar.show { display: flex; }
+        .status-bar.error { border-left: 3px solid var(--primary); }
+        .status-bar.success { border-left: 3px solid var(--secondary); }
+
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .stats { display: flex; align-items: center; gap: 16px; }
+        .stat { font-size: 0.85rem; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+        .stat strong { color: var(--text); font-weight: 700; }
+
+        .filters-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filters {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            flex: 1;
+            min-width: 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .filters::-webkit-scrollbar { display: none; }
+        .filter-btn {
+            padding: 7px 14px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text2);
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .filter-btn:hover { background: var(--bg4); color: var(--text); }
+        .filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+        .search-box { position: relative; min-width: 220px; }
+        .search-box input { padding-left: 38px; height: 38px; font-size: 0.85rem; }
+        .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 0.8rem; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+        .card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            animation: cardIn 0.3s ease both;
+        }
+        @keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: 0 12px 32px rgba(229,9,20,0.12); }
+        .thumb {
+            aspect-ratio: 16/9;
+            background: var(--bg3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .thumb img {
+            max-width: 50%;
+            max-height: 60%;
+            object-fit: contain;
+            transition: var(--transition);
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+        }
+        .card:hover .thumb img { transform: scale(1.08); }
+        .thumb-placeholder {
+            width: 48px; height: 48px;
+            background: var(--bg4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text3);
+        }
+        .play-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .card:hover .play-overlay { opacity: 1; }
+        .play-circle {
+            width: 48px; height: 48px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 16px rgba(229,9,20,0.4);
+        }
+        .card-actions {
+            position: absolute;
+            top: 8px; right: 8px;
+            display: flex;
+            gap: 6px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .card:hover .card-actions { opacity: 1; }
+        .card-action-btn {
+            width: 30px; height: 30px;
+            background: rgba(0,0,0,0.7);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: var(--transition);
+        }
+        .card-action-btn:hover { background: var(--primary); }
+        .card-action-btn.fav-active { background: var(--primary); }
+        .info { padding: 12px; }
+        .info h4 { font-size: 0.9rem; font-weight: 600; line-height: 1.3; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .info .group-tag { display: inline-block; padding: 2px 8px; background: var(--bg4); border-radius: 10px; font-size: 0.7rem; color: var(--text2); }
+
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text2); animation: fadeUp 0.4s ease; }
+        .empty-state i { font-size: 3.5rem; margin-bottom: 16px; opacity: 0.2; display: block; }
+        .empty-state h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--text); }
+        .empty-state p { font-size: 0.9rem; }
+
+        .modal {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.92);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px;
+            backdrop-filter: blur(8px);
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 100%; max-width: 960px;
+            overflow: hidden;
+            animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: var(--shadow);
+        }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .player-wrap { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; }
+        video { width: 100%; height: 100%; object-fit: contain; }
+        .player-overlay {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 16px;
+            background: linear-gradient(transparent 60%, rgba(0,0,0,0.8));
+            opacity: 0;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+        .player-wrap:hover .player-overlay { opacity: 1; }
+        .player-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .player-channel { font-weight: 700; font-size: 1rem; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+        .player-close {
+            width: 40px; height: 40px;
+            background: rgba(0,0,0,0.5);
+            border: none; border-radius: 50%;
+            color: #fff; font-size: 1.1rem;
+            cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            transition: var(--transition);
+            pointer-events: all;
+        }
+        .player-close:hover { background: var(--primary); }
+        .player-bottom { display: flex; align-items: center; gap: 12px; pointer-events: all; }
+        .player-btn {
+            width: 36px; height: 36px;
+            background: rgba(255,255,255,0.1);
+            border: none; border-radius: 8px;
+            color: #fff; font-size: 0.9rem;
+            cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            transition: var(--transition);
+        }
+        .player-btn:hover { background: rgba(255,255,255,0.2); }
+        .volume-slider {
+            width: 80px; height: 4px;
+            -webkit-appearance: none; appearance: none;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+            cursor: pointer;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px; height: 14px;
+            background: #fff; border-radius: 50%;
+            cursor: pointer;
+        }
+        .player-status {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex; flex-direction: column;
+            align-items: center; gap: 12px;
+            color: var(--text2);
+            pointer-events: none;
+        }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .fav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+        .fav-card {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .fav-card:hover { border-color: var(--primary); background: var(--bg3); }
+        .fav-logo {
+            width: 48px; height: 48px;
+            background: var(--bg3);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; flex-shrink: 0;
+        }
+        .fav-logo img { max-width: 32px; max-height: 32px; object-fit: contain; }
+        .fav-info { flex: 1; min-width: 0; }
+        .fav-info h4 { font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .fav-info span { font-size: 0.75rem; color: var(--text2); }
+        .fav-remove {
+            width: 32px; height: 32px;
+            background: var(--bg4);
+            border: none; border-radius: 8px;
+            color: var(--text3);
+            cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            transition: var(--transition);
+        }
+        .fav-remove:hover { background: var(--primary); color: #fff; }
+
+        .settings-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .settings-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .setting-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .setting-row:last-child { border-bottom: none; }
+        .setting-label { font-size: 0.9rem; }
+        .setting-desc { font-size: 0.8rem; color: var(--text2); margin-top: 2px; }
+        .setting-row select {
+            background: var(--bg); color: var(--text);
+            border: 1px solid var(--border);
+            padding: 8px 12px; border-radius: var(--radius-sm);
+            font-size: 0.85rem; cursor: pointer;
+        }
+
+        .cloud-status {
+            display: flex; align-items: center; gap: 8px;
+            padding: 12px 16px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            margin-top: 12px;
+            font-size: 0.85rem;
+        }
+        .cloud-status.synced { border-left: 3px solid var(--secondary); }
+        .cloud-status.error { border-left: 3px solid var(--primary); }
+        .cloud-id {
+            font-family: monospace;
+            background: var(--bg4);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--accent);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px dashed var(--border);
+            transition: var(--transition);
+        }
+        .cloud-id:hover { border-color: var(--accent); background: rgba(59,130,246,0.1); }
+        .cloud-actions { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 3000; display: flex; flex-direction: column; gap: 8px; }
+        .toast {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            padding: 14px 18px;
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.9rem;
+            animation: toastIn 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            max-width: 360px;
+        }
+        .toast.success { border-left: 3px solid var(--secondary); }
+        .toast.error { border-left: 3px solid var(--primary); }
+        .toast.info { border-left: 3px solid var(--accent); }
+        .toast i { font-size: 1rem; }
+        .toast.success i { color: var(--secondary); }
+        .toast.error i { color: var(--primary); }
+        .toast.info i { color: var(--accent); }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(40px); } }
+
+        .view-toggle { display: flex; gap: 4px; background: var(--bg3); border-radius: 8px; padding: 3px; }
+        .view-btn {
+            width: 32px; height: 32px;
+            background: none; border: none; border-radius: 6px;
+            color: var(--text3); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: var(--transition);
+        }
+        .view-btn.active { background: var(--bg4); color: var(--text); }
+        .view-btn:hover { color: var(--text); }
+
+        .list-view { display: flex; flex-direction: column; gap: 8px; }
+        .list-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 12px 16px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .list-item:hover { border-color: var(--primary); background: var(--bg3); }
+        .list-thumb {
+            width: 56px; height: 36px;
+            background: var(--bg3);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; flex-shrink: 0;
+        }
+        .list-thumb img { max-width: 40px; max-height: 24px; object-fit: contain; }
+        .list-info { flex: 1; min-width: 0; }
+        .list-info h4 { font-size: 0.9rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .list-info span { font-size: 0.75rem; color: var(--text2); }
+        .list-play {
+            width: 36px; height: 36px;
+            background: var(--bg4);
+            border: none; border-radius: 50%;
+            color: var(--text2); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: var(--transition);
+        }
+        .list-item:hover .list-play { background: var(--primary); color: #fff; }
+
+        @media (max-width: 768px) {
+            header { padding: 0 16px; }
+            .container { padding: 16px; }
+            .input-row { flex-direction: column; }
+            .input-field { min-width: 100%; }
+            .btn { width: 100%; }
+            .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+            .filters-wrapper { flex-direction: column; align-items: stretch; }
+            .search-box { min-width: 100%; }
+            .modal-content { border-radius: 12px; }
+            .stats-bar { flex-direction: column; align-items: flex-start; }
+            .tabs { width: 100%; }
+            .tab { flex: 1; justify-content: center; padding: 10px 12px; font-size: 0.8rem; }
+            .tab span.tab-text { display: none; }
+        }
+        @media (max-width: 480px) {
+            .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+            .card .info { padding: 8px; }
+            .card .info h4 { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <div class="brand-icon"><i class="fas fa-tv"></i></div>
+            IPTV <em>Master Pro</em>
+        </div>
+        <div class="header-actions">
+            <div class="sync-indicator" id="sync-dot" title="Sincronização ativa"></div>
+            <button class="btn-icon" onclick="showTab('favorites')" title="Favoritos">
+                <i class="fas fa-heart"></i>
+                <span class="badge" id="fav-badge" style="display:none">0</span>
+            </button>
+            <button class="btn-icon" onclick="showTab('settings')" title="Configurações"><i class="fas fa-cog"></i></button>
+        </div>
+    </header>
+
+    <div class="main">
+        <div class="container">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('home')" data-tab="home">
+                    <i class="fas fa-home"></i><span class="tab-text">Início</span>
+                </button>
+                <button class="tab" onclick="showTab('favorites')" data-tab="favorites">
+                    <i class="fas fa-heart"></i><span class="tab-text">Favoritos</span>
+                </button>
+                <button class="tab" onclick="showTab('recent')" data-tab="recent">
+                    <i class="fas fa-history"></i><span class="tab-text">Recentes</span>
+                </button>
+                <button class="tab" onclick="showTab('settings')" data-tab="settings">
+                    <i class="fas fa-cog"></i><span class="tab-text">Config</span>
+                </button>
+            </div>
+
+            <!-- HOME TAB -->
+            <div id="tab-home" class="tab-content">
+                <div class="input-section">
+                    <div class="input-header">
+                        <h3><i class="fas fa-link" style="color:var(--primary)"></i> Carregar Lista IPTV</h3>
+                        <button class="btn btn-ghost" onclick="loadSampleList()" style="padding:8px 14px; font-size:0.8rem;">
+                            <i class="fas fa-flask"></i> Lista Demo
+                        </button>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-field">
+                            <i class="fas fa-globe"></i>
+                            <input type="text" id="url-input" placeholder="https://exemplo.com/lista.m3u ou .m3u8" autocomplete="off" />
+                        </div>
+                        <button class="btn btn-primary" id="load-btn" onclick="loadPlaylist()">
+                            <i class="fas fa-download"></i> Carregar
+                        </button>
+                    </div>
+                    <div class="options-row">
+                        <div class="toggle-row" onclick="toggleOption('proxy')">
+                            <div class="toggle on" id="proxy-toggle"></div>
+                            <span>Usar Proxy CORS</span>
+                        </div>
+                        <div class="toggle-row" onclick="toggleOption('autoPlay')">
+                            <div class="toggle" id="autoplay-toggle"></div>
+                            <span>Auto-play ao clicar</span>
+                        </div>
+                    </div>
+                    <div class="status-bar" id="status-bar"></div>
+                    <div class="recent-list" id="recent-lists"></div>
+                </div>
+
+                <div id="results-area" style="display:none;">
+                    <div class="stats-bar">
+                        <div class="stats">
+                            <div class="stat"><i class="fas fa-tv"></i> <strong id="total-channels">0</strong> canais</div>
+                            <div class="stat"><i class="fas fa-folder"></i> <strong id="total-groups">0</strong> grupos</div>
+                            <div class="stat" id="fav-stat" style="display:none"><i class="fas fa-heart" style="color:var(--primary)"></i> <strong id="total-favs">0</strong> favoritos</div>
+                        </div>
+                        <div class="view-toggle">
+                            <button class="view-btn active" id="grid-view-btn" onclick="setView('grid')" title="Grade"><i class="fas fa-th"></i></button>
+                            <button class="view-btn" id="list-view-btn" onclick="setView('list')" title="Lista"><i class="fas fa-list"></i></button>
+                        </div>
+                    </div>
+                    <div class="filters-wrapper">
+                        <div class="filters" id="group-filters"></div>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="search-input" placeholder="Buscar canal..." oninput="applyFilters()" />
+                        </div>
+                    </div>
+                    <div class="grid" id="channels-grid"></div>
+                    <div class="list-view" id="channels-list" style="display:none;"></div>
+                    <div class="empty-state" id="empty-state" style="display:none;">
+                        <i class="fas fa-search"></i>
+                        <h3>Nenhum canal encontrado</h3>
+                        <p>Tente ajustar os filtros ou buscar por outro termo</p>
+                    </div>
+                </div>
+
+                <div id="welcome-state" class="empty-state">
+                    <i class="fas fa-satellite-dish"></i>
+                    <h3>Bem-vindo ao IPTV Master Pro</h3>
+                    <p>Seus dados estão sincronizados na nuvem ☁️</p>
+                </div>
+            </div>
+
+            <!-- FAVORITES TAB -->
+            <div id="tab-favorites" class="tab-content" style="display:none;">
+                <div class="stats-bar">
+                    <h3><i class="fas fa-heart" style="color:var(--primary)"></i> Canais Favoritos</h3>
+                    <button class="btn btn-ghost" onclick="clearFavorites()" style="padding:8px 14px; font-size:0.8rem;">
+                        <i class="fas fa-trash"></i> Limpar Todos
+                    </button>
+                </div>
+                <div class="fav-grid" id="fav-grid"></div>
+                <div class="empty-state" id="fav-empty" style="display:none;">
+                    <i class="far fa-heart"></i>
+                    <h3>Nenhum favorito ainda</h3>
+                    <p>Clique no ícone de coração nos canais para adicioná-los aqui</p>
+                </div>
+            </div>
+
+            <!-- RECENT TAB -->
+            <div id="tab-recent" class="tab-content" style="display:none;">
+                <div class="stats-bar">
+                    <h3><i class="fas fa-history" style="color:var(--accent)"></i> Listas Recentes</h3>
+                    <button class="btn btn-ghost" onclick="clearRecent()" style="padding:8px 14px; font-size:0.8rem;">
+                        <i class="fas fa-trash"></i> Limpar Histórico
+                    </button>
+                </div>
+                <div id="recent-full-list"></div>
+                <div class="empty-state" id="recent-empty" style="display:none;">
+                    <i class="fas fa-history"></i>
+                    <h3>Nenhuma lista recente</h3>
+                    <p>As listas carregadas aparecerão aqui</p>
+                </div>
+            </div>
+
+            <!-- SETTINGS TAB -->
+            <div id="tab-settings" class="tab-content" style="display:none;">
+                <div class="settings-card" style="border: 1px solid var(--secondary); background: rgba(34,197,94,0.03);">
+                    <h3><i class="fas fa-cloud" style="color:var(--secondary)"></i> Sincronização na Nuvem</h3>
+                    <p style="font-size:0.85rem; color:var(--text2); margin-bottom:16px;">
+                        Seus dados estão configurados para sincronizar via <strong>JSONBin.io</strong>.
+                        Clique em "Carregar da Nuvem" para buscar dados salvos de outro dispositivo.
+                    </p>
+                    
+                    <div id="cloud-id-section">
+                        <div class="setting-label" style="margin-bottom:8px;">Chave de Sincronização (ID da Nuvem)</div>
+                        <div class="cloud-id" id="cloud-id-display" onclick="copyCloudId()" title="Clique para copiar">
+                            <i class="fas fa-key"></i> <span id="cloud-id-text">---</span> <i class="fas fa-copy" style="color:var(--text3)"></i>
+                        </div>
+                    </div>
+
+                    <div class="cloud-actions">
+                        <button class="btn btn-secondary" id="btn-save-cloud" onclick="saveToCloud()" style="flex:1;">
+                            <i class="fas fa-upload"></i> Salvar na Nuvem
+                        </button>
+                        <button class="btn btn-ghost" id="btn-load-cloud" onclick="loadFromCloud()" style="flex:1;">
+                            <i class="fas fa-download"></i> Carregar da Nuvem
+                        </button>
+                    </div>
+
+                    <div class="cloud-status" id="cloud-status" style="display:none;">
+                        <i class="fas fa-check-circle" style="color:var(--secondary);"></i>
+                        <span id="cloud-status-text">Sincronizado com sucesso!</span>
+                    </div>
+
+                    <div style="margin-top:16px;">
+                        <div class="toggle-row" onclick="toggleOption('autoSync')">
+                            <div class="toggle" id="autosync-toggle"></div>
+                            <span>Auto-salvar na nuvem a cada alteração</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h3><i class="fas fa-play-circle"></i> Reprodução</h3>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Buffer do Player</div>
+                            <div class="setting-desc">Tamanho do buffer para streaming HLS</div>
+                        </div>
+                        <select id="buffer-select" onchange="saveSettings()">
+                            <option value="15">15 segundos</option>
+                            <option value="30" selected>30 segundos</option>
+                            <option value="60">60 segundos</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Qualidade Máxima</div>
+                            <div class="setting-desc">Limitar qualidade do stream para economizar dados</div>
+                        </div>
+                        <select id="quality-select" onchange="saveSettings()">
+                            <option value="0" selected>Automático</option>
+                            <option value="1080">1080p</option>
+                            <option value="720">720p</option>
+                            <option value="480">480p</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-card">
+                    <h3><i class="fas fa-database"></i> Dados</h3>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Limpar Cache Local</div>
+                            <div class="setting-desc">Remove dados apenas deste navegador (não apaga a nuvem)</div>
+                        </div>
+                        <button class="btn btn-ghost" onclick="clearLocalData()" style="padding:8px 14px; font-size:0.8rem; color:var(--warning);">
+                            <i class="fas fa-broom"></i> Limpar Local
+                        </button>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Exportar Favoritos (M3U)</div>
+                            <div class="setting-desc">Baixe uma lista M3U com seus canais favoritos</div>
+                        </div>
+                        <button class="btn btn-ghost" onclick="exportFavorites()" style="padding:8px 14px; font-size:0.8rem;">
+                            <i class="fas fa-download"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+                <div class="settings-card">
+                    <h3><i class="fas fa-keyboard"></i> Atalhos do Teclado</h3>
+                    <div class="setting-row"><div class="setting-label"><kbd style="background:var(--bg4);padding:2px 8px;border-radius:4px;font-size:0.8rem;">Space</kbd></div><div class="setting-desc">Play / Pause</div></div>
+                    <div class="setting-row"><div class="setting-label"><kbd style="background:var(--bg4);padding:2px 8px;border-radius:4px;font-size:0.8rem;">F</kbd></div><div class="setting-desc">Tela cheia</div></div>
+                    <div class="setting-row"><div class="setting-label"><kbd style="background:var(--bg4);padding:2px 8px;border-radius:4px;font-size:0.8rem;">M</kbd></div><div class="setting-desc">Mudo</div></div>
+                    <div class="setting-row"><div class="setting-label"><kbd style="background:var(--bg4);padding:2px 8px;border-radius:4px;font-size:0.8rem;">Esc</kbd></div><div class="setting-desc">Fechar player</div></div>
+                    <div class="setting-row"><div class="setting-label"><kbd style="background:var(--bg4);padding:2px 8px;border-radius:4px;font-size:0.8rem;">↑ ↓</kbd></div><div class="setting-desc">Volume</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Modal -->
+    <div class="modal" id="player-modal">
+        <div class="modal-content">
+            <div class="player-wrap" id="player-wrap">
+                <video id="video-player" playsinline></video>
+                <div class="player-overlay">
+                    <div class="player-top">
+                        <div class="player-channel" id="player-channel">Canal</div>
+                        <button class="player-close" onclick="closePlayer()"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="player-bottom">
+                        <button class="player-btn" id="play-btn" onclick="togglePlay()"><i class="fas fa-play"></i></button>
+                        <button class="player-btn" id="pip-btn" onclick="togglePiP()"><i class="fas fa-external-link-alt"></i></button>
+                        <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="80" oninput="setVolume(this.value)">
+                        <button class="player-btn" id="mute-btn" onclick="toggleMute()"><i class="fas fa-volume-up"></i></button>
+                        <div style="flex:1;"></div>
+                        <button class="player-btn" onclick="toggleFullscreen()"><i class="fas fa-expand"></i></button>
+                    </div>
+                </div>
+                <div class="player-status" id="player-status" style="display:none;">
+                    <div class="spinner"></div>
+                    <span>Carregando stream...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════
+        //  CLOUD SYNC CONFIG - JSONBin.io
+        //  Chave e ID pré-configurados
+        // ═══════════════════════════════════════════════════════
+        const CLOUD_API_KEY = '$2a$10$ISDOMV9DYyZR2Z.NtmCMe.4y94QeMrK.L1ycOmt.GfmENetdlfyyC';
+        const CLOUD_BIN_ID = '6a186d9421f9ee59d295fa5e';
+        // ═══════════════════════════════════════════════════════
+
+        let channels = [];
+        let groups = [];
+        let activeGroup = 'all';
+        let currentView = 'grid';
+        let hls = null;
+        let favorites = JSON.parse(localStorage.getItem('iptv_favorites') || '[]');
+        let recentLists = JSON.parse(localStorage.getItem('iptv_recents') || '[]');
+        let settings = JSON.parse(localStorage.getItem('iptv_settings') || '{}');
+        let options = { proxy: true, autoPlay: false, autoSync: false };
+
+        const PROXIES = [
+            'https://api.allorigins.win/raw?url=',
+            'https://corsproxy.io/?',
+            'https://api.codetabs.com/v1/proxy?quest='
+        ];
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedUrl = localStorage.getItem('iptv_last_url');
+            if (savedUrl) document.getElementById('url-input').value = savedUrl;
+
+            if (settings.buffer) document.getElementById('buffer-select').value = settings.buffer;
+            if (settings.quality) document.getElementById('quality-select').value = settings.quality;
+            if (options.autoSync) document.getElementById('autosync-toggle').classList.add('on');
+
+            showCloudId(CLOUD_BIN_ID);
+            loadSavedChannels();
+            renderRecentLists();
+            updateFavBadge();
+
+            document.addEventListener('keydown', handleKeys);
+            document.getElementById('player-modal').addEventListener('click', e => {
+                if (e.target.id === 'player-modal') closePlayer();
+            });
+            document.getElementById('url-input').addEventListener('keydown', e => {
+                if (e.key === 'Enter') loadPlaylist();
+            });
+
+            // Auto-load from cloud on first visit
+            setTimeout(() => autoLoadFromCloud(), 2000);
+        });
+
+        function showTab(name) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${name}`).style.display = 'block';
+            document.querySelector(`[data-tab="${name}"]`).classList.add('active');
+            if (name === 'favorites') renderFavorites();
+            if (name === 'recent') renderRecentFull();
+        }
+
+        function toast(msg, type = 'info') {
+            const c = document.getElementById('toast-container');
+            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = `<i class="fas ${icons[type]}"></i><span>${msg}</span>`;
+            c.appendChild(t);
+            setTimeout(() => {
+                t.style.animation = 'toastOut 0.3s ease forwards';
+                setTimeout(() => t.remove(), 300);
+            }, 3500);
+        }
+
+        function setStatus(msg, type = '', loading = false) {
+            const el = document.getElementById('status-bar');
+            if (!msg) { el.classList.remove('show'); return; }
+            el.classList.add('show');
+            el.className = `status-bar show ${type}`;
+            el.innerHTML = loading
+                ? `<div class="spinner" style="width:18px;height:18px;border-width:2px;"></div><span>${msg}</span>`
+                : `<i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : 'info-circle'}"></i><span>${msg}</span>`;
+        }
+
+        function toggleOption(key) {
+            options[key] = !options[key];
+            const toggleId = key === 'autoPlay' ? 'autoplay' : key === 'autoSync' ? 'autosync' : key;
+            document.getElementById(`${toggleId}-toggle`).classList.toggle('on');
+            if (key === 'autoSync' && options.autoSync) autoSync();
+        }
+
+        function parseM3U(text) {
+            const lines = text.split('\n');
+            const result = [];
+            let current = null;
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                if (!line) continue;
+                if (line.startsWith('#EXTINF')) {
+                    const info = line.substring(8);
+                    const groupMatch = /group-title="([^"]*)"/i.exec(info);
+                    const logoMatch = /tvg-logo="([^"]*)"/i.exec(info);
+                    const nameMatch = /,(.*)$/i.exec(info);
+                    const tvgIdMatch = /tvg-id="([^"]*)"/i.exec(info);
+                    current = {
+                        id: tvgIdMatch ? tvgIdMatch[1] : '',
+                        name: nameMatch ? decodeHTMLEntities(nameMatch[1].trim()) : 'Sem Nome',
+                        group: groupMatch ? groupMatch[1].trim() : 'Sem Grupo',
+                        logo: logoMatch ? logoMatch[1].trim() : '',
+                        url: ''
+                    };
+                } else if (!line.startsWith('#') && current) {
+                    current.url = line;
+                    result.push({ ...current });
+                    current = null;
+                }
+            }
+            return result;
+        }
+
+        function decodeHTMLEntities(text) {
+            const ta = document.createElement('textarea');
+            ta.innerHTML = text;
+            return ta.value;
+        }
+
+        async function loadPlaylist(url) {
+            const inputUrl = url || document.getElementById('url-input').value.trim();
+            if (!inputUrl) return toast('Insira uma URL válida', 'error');
+            const btn = document.getElementById('load-btn');
+            btn.disabled = true;
+            setStatus('Baixando lista...', '', true);
+
+            try {
+                let text = null;
+                let lastError = null;
+                const urlsToTry = [inputUrl];
+                if (options.proxy) urlsToTry.push(...PROXIES.map(p => `${p}${encodeURIComponent(inputUrl)}`));
+
+                for (const fetchUrl of urlsToTry) {
+                    try {
+                        const controller = new AbortController();
+                        const timeout = setTimeout(() => controller.abort(), 15000);
+                        const res = await fetch(fetchUrl, { signal: controller.signal });
+                        clearTimeout(timeout);
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                        text = await res.text();
+                        break;
+                    } catch (e) { lastError = e; continue; }
+                }
+
+                if (!text) throw new Error(lastError?.message || 'Não foi possível acessar a lista');
+                if (!text.includes('#EXTINF') && !text.includes('#EXTM3U')) throw new Error('Formato inválido.');
+
+                channels = parseM3U(text);
+                if (channels.length === 0) throw new Error('Nenhum canal encontrado.');
+
+                const seen = new Set();
+                channels = channels.filter(c => { const key = c.url + c.name; if (seen.has(key)) return false; seen.add(key); return true; });
+
+                groups = ['all', ...new Set(channels.map(c => c.group).filter(g => g && g !== 'Sem Grupo'))].sort();
+                activeGroup = 'all';
+
+                localStorage.setItem('iptv_channels', JSON.stringify(channels));
+                localStorage.setItem('iptv_groups', JSON.stringify(groups));
+                localStorage.setItem('iptv_last_url', inputUrl);
+                saveRecent(inputUrl, channels.length);
+
+                renderGroups();
+                renderChannels();
+                updateStats();
+                toast(`${channels.length} canais carregados!`, 'success');
+                setStatus(`${channels.length} canais de ${groups.length - 1} grupos`, 'success');
+                document.getElementById('results-area').style.display = 'block';
+                document.getElementById('welcome-state').style.display = 'none';
+                autoSync();
+
+            } catch (err) {
+                toast(`Erro: ${err.message}`, 'error');
+                setStatus(`Falha: ${err.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function loadSavedChannels() {
+            const saved = localStorage.getItem('iptv_channels');
+            const savedGroups = localStorage.getItem('iptv_groups');
+            if (saved) {
+                channels = JSON.parse(saved);
+                groups = savedGroups ? JSON.parse(savedGroups) : ['all'];
+                if (channels.length > 0) {
+                    renderGroups();
+                    renderChannels();
+                    updateStats();
+                    document.getElementById('results-area').style.display = 'block';
+                    document.getElementById('welcome-state').style.display = 'none';
+                    setStatus(`${channels.length} canais do cache`, 'success');
+                }
+            }
+        }
+
+        function saveRecent(url, count) {
+            recentLists = recentLists.filter(r => r.url !== url);
+            recentLists.unshift({ url, count, date: Date.now() });
+            if (recentLists.length > 10) recentLists = recentLists.slice(0, 10);
+            localStorage.setItem('iptv_recents', JSON.stringify(recentLists));
+            renderRecentLists();
+        }
+
+        function renderRecentLists() {
+            const container = document.getElementById('recent-lists');
+            if (recentLists.length === 0) { container.innerHTML = ''; return; }
+            container.innerHTML = '<div style="font-size:0.8rem;color:var(--text3);margin-bottom:4px;">Listas recentes:</div>' +
+                recentLists.slice(0, 3).map(r => `
+                    <div class="recent-item" onclick="loadPlaylist('${r.url.replace(/'/g, "\\'")}')">
+                        <i class="fas fa-play" style="color:var(--primary);font-size:0.7rem;"></i>
+                        <span class="url">${r.url}</span>
+                        <span class="count">${r.count} canais</span>
+                        <span class="del" onclick="event.stopPropagation();removeRecent('${r.url.replace(/'/g, "\\'")}')"><i class="fas fa-times"></i></span>
+                    </div>`).join('');
+        }
+
+        function renderRecentFull() {
+            const container = document.getElementById('recent-full-list');
+            const empty = document.getElementById('recent-empty');
+            if (recentLists.length === 0) { container.innerHTML = ''; empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            container.innerHTML = recentLists.map(r => `
+                <div class="recent-item" onclick="loadPlaylist('${r.url.replace(/'/g, "\\'")}')">
+                    <i class="fas fa-play" style="color:var(--primary);font-size:0.7rem;"></i>
+                    <span class="url">${r.url}</span>
+                    <span class="count">${r.count} canais • ${timeAgo(r.date)}</span>
+                    <span class="del" onclick="event.stopPropagation();removeRecent('${r.url.replace(/'/g, "\\'")}')"><i class="fas fa-times"></i></span>
+                </div>`).join('');
+        }
+
+        function removeRecent(url) {
+            recentLists = recentLists.filter(r => r.url !== url);
+            localStorage.setItem('iptv_recents', JSON.stringify(recentLists));
+            renderRecentLists(); renderRecentFull();
+            toast('Lista removida', 'info');
+        }
+
+        function clearRecent() {
+            recentLists = [];
+            localStorage.setItem('iptv_recents', '[]');
+            renderRecentLists(); renderRecentFull();
+            toast('Histórico limpo', 'info');
+        }
+
+        function timeAgo(ts) {
+            const diff = Date.now() - ts;
+            const mins = Math.floor(diff / 60000);
+            if (mins < 1) return 'agora';
+            if (mins < 60) return `${mins}min atrás`;
+            const hrs = Math.floor(mins / 60);
+            if (hrs < 24) return `${hrs}h atrás`;
+            return `${Math.floor(hrs / 24)}d atrás`;
+        }
+
+        function renderGroups() {
+            const container = document.getElementById('group-filters');
+            container.innerHTML = `<button class="filter-btn ${activeGroup === 'all' ? 'active' : ''}" onclick="setGroup('all')"><i class="fas fa-layer-group" style="margin-right:4px;font-size:0.7rem;"></i>Todos (${channels.length})</button>` +
+                groups.filter(g => g !== 'all').map(g => {
+                    const count = channels.filter(c => c.group === g).length;
+                    return `<button class="filter-btn ${activeGroup === g ? 'active' : ''}" onclick="setGroup('${escapeStr(g)}')">${g} (${count})</button>`;
+                }).join('');
+        }
+
+        function escapeStr(s) { return s.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+        function setGroup(g) { activeGroup = g; renderGroups(); applyFilters(); }
+
+        function applyFilters() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const filtered = channels.filter(c => {
+                const matchGroup = activeGroup === 'all' || c.group === activeGroup;
+                const matchSearch = !query || c.name.toLowerCase().includes(query) || c.group.toLowerCase().includes(query);
+                return matchGroup && matchSearch;
+            });
+            renderChannels(filtered);
+        }
+
+        function updateStats() {
+            document.getElementById('total-channels').textContent = channels.length;
+            document.getElementById('total-groups').textContent = groups.length - 1;
+            const favCount = favorites.length;
+            if (favCount > 0) {
+                document.getElementById('fav-stat').style.display = 'flex';
+                document.getElementById('total-favs').textContent = favCount;
+            }
+        }
+
+        function renderChannels(list) {
+            if (!list) list = channels;
+            const grid = document.getElementById('channels-grid');
+            const listEl = document.getElementById('channels-list');
+            const empty = document.getElementById('empty-state');
+
+            if (list.length === 0) { grid.innerHTML = ''; listEl.innerHTML = ''; empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+
+            grid.innerHTML = list.map((c, i) => {
+                const gi = channels.indexOf(c);
+                const isFav = favorites.some(f => f.url === c.url);
+                return `<div class="card" style="animation-delay:${Math.min(i * 0.02, 0.5)}s" onclick="playChannel(${gi})">
+                    <div class="thumb">${c.logo
+                        ? `<img src="${c.logo}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'thumb-placeholder\\'><i class=\\'fas fa-tv\\'></i></div><div class=\\'play-overlay\\'><div class=\\'play-circle\\'><i class=\\'fas fa-play\\' style=\\'margin-left:2px;\\'></i></div></div>'">`
+                        : `<div class="thumb-placeholder"><i class="fas fa-tv"></i></div>`}
+                        <div class="play-overlay"><div class="play-circle"><i class="fas fa-play" style="margin-left:2px;"></i></div></div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="card-action-btn ${isFav ? 'fav-active' : ''}" onclick="event.stopPropagation();toggleFav(${gi})" title="Favoritar"><i class="fas fa-heart"></i></button>
+                    </div>
+                    <div class="info"><h4 title="${escapeAttr(c.name)}">${c.name}</h4><span class="group-tag">${c.group}</span></div>
+                </div>`;
+            }).join('');
+
+            listEl.innerHTML = list.map((c, i) => {
+                const gi = channels.indexOf(c);
+                return `<div class="list-item" onclick="playChannel(${gi})">
+                    <div class="list-thumb">${c.logo ? `<img src="${c.logo}" loading="lazy" onerror="this.style.display='none'">` : '<i class="fas fa-tv" style="color:var(--text3)"></i>'}</div>
+                    <div class="list-info"><h4>${c.name}</h4><span>${c.group}</span></div>
+                    <button class="list-play"><i class="fas fa-play" style="font-size:0.75rem;margin-left:2px;"></i></button>
+                </div>`;
+            }).join('');
+        }
+
+        function escapeAttr(s) { return s.replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+        function setView(view) {
+            currentView = view;
+            document.getElementById('channels-grid').style.display = view === 'grid' ? 'grid' : 'none';
+            document.getElementById('channels-list').style.display = view === 'list' ? 'flex' : 'none';
+            document.getElementById('grid-view-btn').classList.toggle('active', view === 'grid');
+            document.getElementById('list-view-btn').classList.toggle('active', view === 'list');
+        }
+
+        // Player
+        function playChannel(idx) {
+            const c = channels[idx];
+            if (!c) return;
+            const modal = document.getElementById('player-modal');
+            const video = document.getElementById('video-player');
+            const title = document.getElementById('player-channel');
+            const status = document.getElementById('player-status');
+            const playBtn = document.getElementById('play-btn');
+
+            modal.classList.add('show');
+            title.textContent = c.name;
+            status.style.display = 'flex';
+            if (hls) { hls.destroy(); hls = null; }
+            video.src = '';
+            video.pause();
+
+            const bufferLen = parseInt(settings.buffer || '30');
+            if (c.url.includes('.m3u8') || c.url.includes('m3u8')) {
+                if (Hls.isSupported()) {
+                    hls = new Hls({ enableWorker: true, maxBufferLength: bufferLen, maxMaxBufferLength: bufferLen * 2, startLevel: -1, capLevelToPlayerSize: true });
+                    hls.loadSource(c.url);
+                    hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => { status.style.display = 'none'; video.play().catch(() => {}); });
+                    hls.on(Hls.Events.LEVEL_SWITCHED, (e, data) => {
+                        const maxQ = parseInt(settings.quality || '0');
+                        if (maxQ > 0 && hls.levels[data.level] && hls.levels[data.level].height > maxQ) {
+                            hls.currentLevel = hls.levels.findIndex(l => l.height <= maxQ);
+                        }
+                    });
+                    hls.on(Hls.Events.ERROR, (e, data) => {
+                        if (data.fatal) {
+                            if (data.type === Hls.ErrorTypes.NETWORK_ERROR) { toast('Erro de rede. Tentando...', 'error'); hls.startLoad(); }
+                            else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) { toast('Erro de mídia. Tentando...', 'error'); hls.recoverMediaError(); }
+                            else { toast('Erro fatal.', 'error'); closePlayer(); }
+                        }
+                    });
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = c.url;
+                    video.addEventListener('loadedmetadata', () => { status.style.display = 'none'; video.play().catch(() => {}); }, { once: true });
+                } else { toast('Navegador não suporta HLS.', 'error'); closePlayer(); return; }
+            } else {
+                video.src = c.url;
+                video.addEventListener('canplay', () => { status.style.display = 'none'; video.play().catch(() => {}); }, { once: true });
+                video.addEventListener('error', () => { toast('Erro ao carregar stream.', 'error'); closePlayer(); }, { once: true });
+            }
+            video.onplay = () => { playBtn.innerHTML = '<i class="fas fa-pause"></i>'; };
+            video.onpause = () => { playBtn.innerHTML = '<i class="fas fa-play"></i>'; };
+        }
+
+        function closePlayer() {
+            const video = document.getElementById('video-player');
+            video.pause(); video.src = '';
+            if (hls) { hls.destroy(); hls = null; }
+            document.getElementById('player-modal').classList.remove('show');
+            if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        }
+        function togglePlay() { const v = document.getElementById('video-player'); v.paused ? v.play().catch(()=>{}) : v.pause(); }
+        function toggleMute() { const v = document.getElementById('video-player'); const b = document.getElementById('mute-btn'); v.muted = !v.muted; b.innerHTML = v.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>'; }
+        function setVolume(val) { const v = document.getElementById('video-player'); v.volume = val / 100; const b = document.getElementById('mute-btn'); if (val == 0) b.innerHTML = '<i class="fas fa-volume-mute"></i>'; else if (val < 50) b.innerHTML = '<i class="fas fa-volume-down"></i>'; else b.innerHTML = '<i class="fas fa-volume-up"></i>'; }
+        async function togglePiP() { const v = document.getElementById('video-player'); try { document.pictureInPictureElement ? await document.exitPictureInPicture() : await v.requestPictureInPicture(); } catch(e) { toast('PiP não suportado', 'error'); } }
+        function toggleFullscreen() { const w = document.getElementById('player-wrap'); document.fullscreenElement ? document.exitFullscreen().catch(()=>{}) : w.requestFullscreen().catch(()=>{}); }
+
+        function handleKeys(e) {
+            const modal = document.getElementById('player-modal');
+            if (!modal.classList.contains('show')) { if (e.key === 'Escape') closePlayer(); return; }
+            const v = document.getElementById('video-player');
+            switch (e.key) {
+                case 'Escape': closePlayer(); break;
+                case ' ': e.preventDefault(); togglePlay(); break;
+                case 'f': case 'F': toggleFullscreen(); break;
+                case 'm': case 'M': toggleMute(); break;
+                case 'ArrowUp': e.preventDefault(); v.volume = Math.min(1, v.volume + 0.1); document.getElementById('volume-slider').value = v.volume * 100; break;
+                case 'ArrowDown': e.preventDefault(); v.volume = Math.max(0, v.volume - 0.1); document.getElementById('volume-slider').value = v.volume * 100; break;
+            }
+        }
+
+        // Favorites
+        function toggleFav(idx) {
+            const c = channels[idx];
+            const existIdx = favorites.findIndex(f => f.url === c.url);
+            if (existIdx >= 0) { favorites.splice(existIdx, 1); toast('Removido dos favoritos', 'info'); }
+            else { favorites.push({ name: c.name, url: c.url, logo: c.logo, group: c.group }); toast('Adicionado aos favoritos!', 'success'); }
+            localStorage.setItem('iptv_favorites', JSON.stringify(favorites));
+            updateFavBadge(); renderChannels(); updateStats(); autoSync();
+        }
+        function renderFavorites() {
+            const grid = document.getElementById('fav-grid');
+            const empty = document.getElementById('fav-empty');
+            if (favorites.length === 0) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            grid.innerHTML = favorites.map((f, i) => `
+                <div class="fav-card" onclick="playFav(${i})">
+                    <div class="fav-logo">${f.logo ? `<img src="${f.logo}" onerror="this.style.display='none'">` : '<i class="fas fa-tv" style="color:var(--text3)"></i>'}</div>
+                    <div class="fav-info"><h4>${f.name}</h4><span>${f.group}</span></div>
+                    <button class="fav-remove" onclick="event.stopPropagation();removeFav(${i})"><i class="fas fa-trash"></i></button>
+                </div>`).join('');
+        }
+        function playFav(idx) {
+            const f = favorites[idx];
+            const chIdx = channels.findIndex(c => c.url === f.url);
+            if (chIdx >= 0) playChannel(chIdx);
+            else { channels.push(f); playChannel(channels.length - 1); channels.pop(); }
+        }
+        function removeFav(idx) {
+            favorites.splice(idx, 1);
+            localStorage.setItem('iptv_favorites', JSON.stringify(favorites));
+            updateFavBadge(); renderFavorites(); renderChannels(); updateStats(); autoSync();
+            toast('Favorito removido', 'info');
+        }
+        function clearFavorites() {
+            if (favorites.length === 0) return;
+            if (!confirm('Remover todos os favoritos?')) return;
+            favorites = [];
+            localStorage.setItem('iptv_favorites', '[]');
+            updateFavBadge(); renderFavorites(); renderChannels(); updateStats(); autoSync();
+            toast('Favoritos limpos', 'info');
+        }
+        function updateFavBadge() {
+            const badge = document.getElementById('fav-badge');
+            if (favorites.length > 0) { badge.style.display = 'flex'; badge.textContent = favorites.length > 9 ? '9+' : favorites.length; }
+            else badge.style.display = 'none';
+        }
+        function exportFavorites() {
+            if (favorites.length === 0) return toast('Nenhum favorito', 'error');
+            let m3u = '#EXTM3U\n';
+            favorites.forEach(f => { m3u += `#EXTINF:-1 group-title="${f.group}" tvg-logo="${f.logo}",${f.name}\n${f.url}\n`; });
+            const blob = new Blob([m3u], { type: 'audio/x-mpegurl' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'favoritos_iptv.m3u'; a.click();
+            toast('Favoritos exportados!', 'success');
+        }
+
+        function saveSettings() {
+            settings.buffer = document.getElementById('buffer-select').value;
+            settings.quality = document.getElementById('quality-select').value;
+            localStorage.setItem('iptv_settings', JSON.stringify(settings));
+            toast('Configurações salvas', 'success');
+        }
+        function clearLocalData() {
+            if (!confirm('Limpar dados APENAS deste navegador?')) return;
+            localStorage.removeItem('iptv_channels'); localStorage.removeItem('iptv_groups');
+            localStorage.removeItem('iptv_last_url'); localStorage.removeItem('iptv_favorites');
+            localStorage.removeItem('iptv_recents'); localStorage.removeItem('iptv_settings');
+            channels = []; groups = []; favorites = []; recentLists = [];
+            document.getElementById('results-area').style.display = 'none';
+            document.getElementById('welcome-state').style.display = 'block';
+            document.getElementById('url-input').value = '';
+            updateFavBadge(); renderRecentLists();
+            toast('Dados locais removidos', 'info');
+            showTab('home');
+        }
+        function loadSampleList() { document.getElementById('url-input').value = 'https://iptv-org.github.io/iptv/index.m3u'; loadPlaylist(); }
+
+        // ═══════════════════════════════════════════════════════
+        //  CLOUD SYNC FUNCTIONS
+        // ═══════════════════════════════════════════════════════
+        function showCloudId(id) {
+            document.getElementById('cloud-id-section').style.display = 'block';
+            document.getElementById('cloud-id-text').textContent = id;
+        }
+
+        function showCloudStatus(msg, type) {
+            const el = document.getElementById('cloud-status');
+            el.style.display = 'flex';
+            el.className = `cloud-status ${type}`;
+            document.getElementById('cloud-status-text').textContent = msg;
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
+        }
+
+        function copyCloudId() {
+            const id = document.getElementById('cloud-id-text').textContent;
+            navigator.clipboard.writeText(id).then(() => toast('ID copiado!', 'success')).catch(() => toast('Erro ao copiar', 'error'));
+        }
+
+        async function saveToCloud() {
+            const btn = document.getElementById('btn-save-cloud');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;"></div> Salvando...';
+
+            const data = {
+                version: 1,
+                lastUrl: localStorage.getItem('iptv_last_url') || '',
+                favorites,
+                recents: recentLists,
+                settings,
+                updatedAt: new Date().toISOString()
+            };
+
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${CLOUD_BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': CLOUD_API_KEY
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.message || `HTTP ${res.status}`);
+                }
+
+                showCloudStatus(`Salvo! ${favorites.length} favoritos, ${recentLists.length} recentes`, 'success');
+                toast('Dados salvos na nuvem!', 'success');
+                document.getElementById('sync-dot').style.background = 'var(--secondary)';
+
+            } catch (err) {
+                showCloudStatus(`Erro: ${err.message}`, 'error');
+                toast(`Falha ao salvar: ${err.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-upload"></i> Salvar na Nuvem';
+            }
+        }
+
+        async function loadFromCloud() {
+            const btn = document.getElementById('btn-load-cloud');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;"></div> Carregando...';
+
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${CLOUD_BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': CLOUD_API_KEY }
+                });
+
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const result = await res.json();
+                const data = result.record;
+
+                if (data.version !== 1) throw new Error('Formato incompatível');
+
+                if (data.favorites) {
+                    favorites = data.favorites;
+                    localStorage.setItem('iptv_favorites', JSON.stringify(favorites));
+                    updateFavBadge();
+                }
+                if (data.recents) {
+                    recentLists = data.recents;
+                    localStorage.setItem('iptv_recents', JSON.stringify(recentLists));
+                    renderRecentLists();
+                }
+                if (data.lastUrl) {
+                    localStorage.setItem('iptv_last_url', data.lastUrl);
+                    document.getElementById('url-input').value = data.lastUrl;
+                }
+
+                showCloudStatus(`Carregado! ${favorites.length} favoritos, ${recentLists.length} recentes`, 'success');
+                toast('Dados carregados da nuvem!', 'success');
+                renderChannels(); updateStats();
+
+            } catch (err) {
+                showCloudStatus(`Erro: ${err.message}`, 'error');
+                toast(`Falha ao carregar: ${err.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-download"></i> Carregar da Nuvem';
+            }
+        }
+
+        // Auto-load from cloud on startup if local data is empty
+        async function autoLoadFromCloud() {
+            const hasLocalFavs = favorites.length > 0;
+            const hasLocalRecents = recentLists.length > 0;
+            
+            if (!hasLocalFavs && !hasLocalRecents) {
+                try {
+                    const res = await fetch(`https://api.jsonbin.io/v3/b/${CLOUD_BIN_ID}/latest`, {
+                        headers: { 'X-Master-Key': CLOUD_API_KEY }
+                    });
+                    if (!res.ok) return;
+                    const result = await res.json();
+                    const data = result.record;
+
+                    if (data.version === 1) {
+                        let loaded = [];
+                        if (data.favorites && data.favorites.length > 0) {
+                            favorites = data.favorites;
+                            localStorage.setItem('iptv_favorites', JSON.stringify(favorites));
+                            updateFavBadge();
+                            loaded.push(`${favorites.length} favoritos`);
+                        }
+                        if (data.recents && data.recents.length > 0) {
+                            recentLists = data.recents;
+                            localStorage.setItem('iptv_recents', JSON.stringify(recentLists));
+                            renderRecentLists();
+                            loaded.push(`${recentLists.length} recentes`);
+                        }
+                        if (data.lastUrl) {
+                            localStorage.setItem('iptv_last_url', data.lastUrl);
+                            document.getElementById('url-input').value = data.lastUrl;
+                        }
+                        if (loaded.length > 0) {
+                            toast(`☁️ Dados da nuvem carregados: ${loaded.join(', ')}`, 'success');
+                        }
+                    }
+                } catch (e) {
+                    console.log('Auto-load cloud skipped:', e.message);
+                }
+            }
+        }
+
+        let autoSyncTimeout;
+        function autoSync() {
+            if (!options.autoSync) return;
+            clearTimeout(autoSyncTimeout);
+            autoSyncTimeout = setTimeout(() => saveToCloud(), 3000);
+        }
+    </script>
+</body>
+</html>
