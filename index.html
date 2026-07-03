@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BrasilTV — Player IPTV Completo</title>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/mpegts.js@latest/dist/mpegts.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.0/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5.0.0/index.css">
 <style>
@@ -47,7 +48,6 @@
   .info-box ol { margin: 8px 0 8px 18px; }
   .info-box li { margin: 4px 0; }
   .info-box a { color: var(--accent); text-decoration: none; font-weight: 600; }
-  .info-box a:hover { text-decoration: underline; }
 
   .export-box {
     background: rgba(0,200,83,0.08); border: 1px solid rgba(0,200,83,0.25);
@@ -61,7 +61,24 @@
   }
   .export-btn:hover { background: #00a844; transform: translateY(-1px); }
   .export-btn.secondary { background: var(--bg-3); color: var(--text); border: 1px solid var(--border); }
-  .export-btn.secondary:hover { border-color: var(--accent); color: var(--accent); background: var(--bg-3); }
+  .export-btn.test { background: var(--info); color: #000; }
+  .export-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .test-progress {
+    background: var(--bg-3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px; margin-bottom: 16px;
+    display: none;
+  }
+  .test-progress.show { display: block; }
+  .progress-bar {
+    width: 100%; height: 6px; background: var(--bg);
+    border-radius: 3px; overflow: hidden; margin: 8px 0;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.3s; width: 0%;
+  }
+  .progress-text { font-size: 11px; color: var(--text-dim); }
 
   .url-input-box {
     background: var(--bg-3); border: 1px solid var(--border);
@@ -76,18 +93,16 @@
     border: 1px solid var(--border); border-radius: 6px; color: var(--text);
     font-size: 12px; margin-bottom: 8px;
   }
-  .url-input-box input:focus { outline: none; border-color: var(--accent); }
   .url-input-box button {
     width: 100%; padding: 8px; background: var(--accent); color: #000;
     border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;
   }
-  .url-input-box button:hover { background: #00a844; }
 
   .search { position: relative; margin-bottom: 16px; }
   .search input {
     width: 100%; padding: 11px 14px 11px 38px; background: var(--bg-3);
     border: 1px solid var(--border); border-radius: 10px; color: var(--text);
-    font-size: 13px; transition: all 0.2s;
+    font-size: 13px;
   }
   .search input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,200,83,0.15); }
   .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-dim); }
@@ -148,7 +163,7 @@
   .video-placeholder {
     position: absolute; inset: 0; display: grid; place-items: center;
     background: radial-gradient(circle at center, #1a2234, #000);
-    color: var(--text-dim); text-align: center; padding: 20px;
+    color: var(--text-dim); text-align: center; padding: 20px; overflow-y: auto;
   }
   .video-placeholder svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.5; }
   .video-placeholder p { font-size: 14px; max-width: 500px; line-height: 1.5; }
@@ -172,9 +187,32 @@
     transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;
     font-weight: 500;
   }
-  .player-btns button:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+  .player-btns button:hover { border-color: var(--accent); color: var(--accent); }
   .player-btns button.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
-  .player-btns button.primary:hover { background: #00a844; color: #000; }
+
+  /* STATUS DO PLAYER */
+  .player-status {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 18px; background: var(--bg-3);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px; color: var(--text-dim);
+  }
+  .status-indicator {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--text-dim);
+  }
+  .status-dot.connecting { background: var(--accent-2); animation: pulse 1s infinite; }
+  .status-dot.playing { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+  .status-dot.error { background: var(--danger); }
+  .player-info { flex: 1; }
+  .player-format {
+    font-size: 10px; padding: 2px 8px; border-radius: 4px;
+    background: rgba(156,136,255,0.15); color: var(--purple);
+    text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
+  }
 
   .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
   .header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.8px; }
@@ -186,10 +224,9 @@
   .stat-val.green { color: var(--accent); }
   .stat-val.yellow { color: var(--accent-2); }
   .stat-val.blue { color: var(--info); }
+  .stat-val.purple { color: var(--purple); }
 
-  .loading {
-    text-align: center; padding: 60px 20px; color: var(--text-dim);
-  }
+  .loading { text-align: center; padding: 60px 20px; color: var(--text-dim); }
   .loading svg { width: 48px; height: 48px; margin-bottom: 12px; animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -199,6 +236,8 @@
   }
   .channel-card:hover { border-color: rgba(0,200,83,0.4); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
   .channel-card.playing { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,200,83,0.2); }
+  .channel-card.working { border-left: 3px solid var(--accent); }
+  .channel-card.not-working { border-left: 3px solid var(--danger); opacity: 0.6; }
   .ch-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
   .ch-logo {
     width: 48px; height: 48px; border-radius: 10px;
@@ -217,6 +256,8 @@
   }
   .ch-tag.cat { background: rgba(77,171,247,0.15); color: var(--info); }
   .ch-tag.group { background: rgba(156,136,255,0.15); color: var(--purple); }
+  .ch-tag.status-ok { background: rgba(0,200,83,0.15); color: var(--accent); }
+  .ch-tag.status-fail { background: rgba(255,71,87,0.15); color: var(--danger); }
   .ch-url-box {
     background: var(--bg-3); border: 1px solid var(--border); border-radius: 8px;
     padding: 10px; margin-bottom: 10px;
@@ -235,9 +276,7 @@
   }
   .ch-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
   .ch-btn.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
-  .ch-btn.primary:hover { background: #00a844; color: #000; }
   .ch-btn.play { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
-  .ch-btn.play:hover { background: #00a844; color: #000; }
 
   .empty { text-align: center; padding: 60px 20px; color: var(--text-dim); }
   .empty svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.4; }
@@ -257,7 +296,6 @@
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--bg-3); }
   @media (max-width: 900px) {
     .app { grid-template-columns: 1fr; }
     .sidebar { position: static; height: auto; max-height: 60vh; }
@@ -274,18 +312,25 @@
     </div>
 
     <div class="info-box">
-      <strong>📺 Como assistir</strong>
+      <strong>📺 Player M3U Integrado</strong>
       <ol>
-        <li>Clique em <strong>▶ Assistir</strong> para tentar reproduzir direto</li>
-        <li>Se falhar, use <strong>VLC</strong>: Mídia → Abrir Transmissão de Rede</li>
-        <li>Ou importe a lista M3U completa</li>
+        <li>Clique em <strong>▶ Assistir</strong> para reproduzir</li>
+        <li>Player suporta: <strong>HLS, MPEG-TS, MP4</strong></li>
+        <li>Se falhar, use <strong>VLC</strong> com a URL</li>
       </ol>
       <a href="https://www.videolan.org/vlc/" target="_blank">⬇ Baixar VLC →</a>
     </div>
 
     <div class="export-box">
-      <button class="export-btn" onclick="exportM3U()">⬇ Baixar Lista M3U Completa</button>
+      <button class="export-btn" onclick="exportM3U()">⬇ Baixar Lista M3U</button>
       <button class="export-btn secondary" onclick="copyAllM3U()">📋 Copiar Lista M3U</button>
+      <button class="export-btn test" id="testBtn" onclick="testAllStreams()">🔍 Testar Streams</button>
+    </div>
+
+    <div class="test-progress" id="testProgress">
+      <div class="progress-text" id="progressText">Testando streams...</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text" id="progressStats">0 / 0 testados</div>
     </div>
 
     <div class="url-input-box">
@@ -295,16 +340,17 @@
     </div>
 
     <div class="search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="searchInput" placeholder="Buscar canal...">
     </div>
+    <div class="cat-title">Filtros</div>
+    <div class="cat-list" id="filterList"></div>
     <div class="cat-title">Grupos</div>
     <div class="cat-list" id="groupList"></div>
     <div class="cat-title">Categorias</div>
     <div class="cat-list" id="catList"></div>
   </aside>
   <main class="main">
-    <!-- PLAYER -->
     <div class="player-section" id="playerSection">
       <div class="player-header">
         <div class="player-title">
@@ -322,6 +368,14 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
+      </div>
+      <div class="player-status" id="playerStatus">
+        <div class="status-indicator">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Pronto</span>
+        </div>
+        <div class="player-info"></div>
+        <span class="player-format" id="playerFormat">—</span>
       </div>
       <div class="video-container">
         <video id="videoPlayer" controls autoplay playsinline></video>
@@ -344,15 +398,16 @@
       </div>
       <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
         <div class="stats">
-          <div class="stat"><div class="stat-val green" id="statTotal">0</div><div class="stat-lbl">Canais</div></div>
+          <div class="stat"><div class="stat-val green" id="statTotal">0</div><div class="stat-lbl">Total</div></div>
+          <div class="stat"><div class="stat-val blue" id="statWorking">0</div><div class="stat-lbl">Funcionando</div></div>
           <div class="stat"><div class="stat-val yellow" id="statCats">0</div><div class="stat-lbl">Categorias</div></div>
-          <div class="stat"><div class="stat-val blue" id="statGroups">0</div><div class="stat-lbl">Grupos</div></div>
+          <div class="stat"><div class="stat-val purple" id="statGroups">0</div><div class="stat-lbl">Grupos</div></div>
         </div>
       </div>
     </div>
     <div id="channelList">
       <div class="loading">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
         <p>Carregando lista IPTV...</p>
       </div>
     </div>
@@ -368,22 +423,47 @@
 let allChannels = [];
 let activeGroup = 'all';
 let activeCategory = 'all';
+let activeFilter = 'all';
 let currentSearch = '';
 let currentChannel = null;
 let hls = null;
+let mpegtsPlayer = null;
+let isTesting = false;
+let currentPlayId = 0;
 
-const DEFAULT_M3U_URL = 'https://raw.githubusercontent.com/helenfernanda/gratis/main/iptvlegal.m3u';
+const CORS_PROXIES = [
+  'https://api.allorigins.win/raw?url=',
+  'https://corsproxy.io/?',
+  'https://api.codetabs.com/v1/proxy?quest='
+];
+
+const M3U_SOURCES = [
+  { url: 'https://raw.githubusercontent.com/helenfernanda/gratis/main/iptvlegal.m3u', name: 'Lista IPTV Legal' },
+  { url: 'http://flipex.pro:80/get.php?username=Re82546vh39&password=48259464LT37&type=m3u', name: 'Flipex IPTV' },
+  { url: 'http://bs21.me:80/get.php?username=GlaucioX1581fs&password=15Gx51fs&type=m3u_plus', name: 'BS21 IPTV' }
+];
 
 async function loadM3UFromUrl(url) {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Falha ao carregar');
-    const text = await response.text();
-    return text;
-  } catch (e) {
-    console.error('Erro ao carregar M3U:', e);
-    return null;
+  if (url.startsWith('https://')) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const text = await response.text();
+        if (text.includes('#EXTM3U') || text.includes('#EXTINF')) return text;
+      }
+    } catch (e) {}
   }
+  
+  for (const proxy of CORS_PROXIES) {
+    try {
+      const response = await fetch(proxy + encodeURIComponent(url));
+      if (response.ok) {
+        const text = await response.text();
+        if (text.includes('#EXTM3U') || text.includes('#EXTINF')) return text;
+      }
+    } catch (e) { continue; }
+  }
+  return null;
 }
 
 function parseM3U(text, sourceName = 'Lista Externa') {
@@ -405,17 +485,13 @@ function parseM3U(text, sourceName = 'Lista Externa') {
       const logo = logoMatch ? logoMatch[1] : '';
       
       channels.push({
-        name,
-        group,
-        logo,
-        url,
-        sourceName,
+        name, group, logo, url, sourceName,
         id: channels.length,
-        subCat: getSubCategory(name)
+        subCat: getSubCategory(name),
+        working: null, tested: false
       });
     }
   }
-  
   return channels;
 }
 
@@ -438,9 +514,45 @@ function getInitials(name) {
   return (words[0][0] + (words[1][0] || '')).toUpperCase();
 }
 
-// PLAYER FUNCTIONS
+// ═══════════════════════════════════════════════════════
+//  REPRODUTOR M3U - SUPORTE HLS + MPEG-TS + NATIVO
+// ═══════════════════════════════════════════════════════
+
+function cleanupPlayer() {
+  if (hls) { try { hls.destroy(); } catch(e){} hls = null; }
+  if (mpegtsPlayer) { try { mpegtsPlayer.destroy(); } catch(e){} mpegtsPlayer = null; }
+  const video = document.getElementById('videoPlayer');
+  video.oncanplay = null;
+  video.onerror = null;
+  video.onloadeddata = null;
+  video.onstalled = null;
+  video.removeAttribute('src');
+  video.load();
+}
+
+function detectStreamFormat(url) {
+  const u = url.toLowerCase();
+  if (u.includes('.m3u8') || u.includes('m3u8')) return 'hls';
+  if (u.endsWith('.ts') || u.includes('/live/') || u.includes(':80/') || u.includes(':8080/')) return 'mpegts';
+  if (u.endsWith('.flv')) return 'flv';
+  if (u.endsWith('.mp4') || u.endsWith('.mkv')) return 'native';
+  return 'auto';
+}
+
+function setStatus(state, text, format = '—') {
+  const dot = document.getElementById('statusDot');
+  const statusText = document.getElementById('statusText');
+  const formatEl = document.getElementById('playerFormat');
+  
+  dot.className = 'status-dot ' + state;
+  statusText.textContent = text;
+  formatEl.textContent = format;
+}
+
 function playChannel(channel) {
   currentChannel = channel;
+  currentPlayId++;
+  const myPlayId = currentPlayId;
   
   const playerSection = document.getElementById('playerSection');
   const video = document.getElementById('videoPlayer');
@@ -453,71 +565,147 @@ function playChannel(channel) {
   playerSection.classList.add('show');
   document.getElementById('playerChannelName').textContent = channel.name;
   
-  // Limpa player anterior
-  if (hls) {
-    try { hls.destroy(); } catch(e) {}
-    hls = null;
-  }
-  video.removeAttribute('src');
-  video.load();
+  cleanupPlayer();
   
   placeholder.style.display = 'none';
   video.style.display = 'block';
+  
+  setStatus('connecting', 'Conectando ao stream...', 'AUTO');
   msg.textContent = 'Tentando conectar ao stream...';
   warn.textContent = '';
   errBox.innerHTML = '';
   playerBtns.innerHTML = '';
   
   const url = channel.url;
+  const format = detectStreamFormat(url);
   
-  // Timeout para mostrar erro se não conectar em 5 segundos
+  // Timeout geral de 8 segundos
   const timeout = setTimeout(() => {
+    if (myPlayId !== currentPlayId) return;
     if (video.readyState < 3) {
-      showPlaybackError(channel);
+      showPlaybackError(channel, 'Timeout: stream não respondeu em 8 segundos');
     }
-  }, 5000);
+  }, 8000);
   
-  // Tenta reproduzir
   try {
-    if (url.includes('.m3u8') && window.Hls && Hls.isSupported()) {
-      hls = new Hls({ enableWorker: true });
+    // 1. Tenta HLS primeiro se for .m3u8
+    if (format === 'hls' && window.Hls && Hls.isSupported()) {
+      setStatus('connecting', 'Conectando via HLS...', 'HLS');
+      hls = new Hls({ enableWorker: true, lowLatencyMode: false });
       hls.loadSource(url);
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        if (myPlayId !== currentPlayId) return;
         clearTimeout(timeout);
+        setStatus('playing', 'Reproduzindo', 'HLS');
         video.play().catch(() => {});
       });
       hls.on(Hls.Events.ERROR, (e, data) => {
+        if (myPlayId !== currentPlayId) return;
         if (data && data.fatal) {
           clearTimeout(timeout);
-          showPlaybackError(channel);
+          // Tenta MPEG-TS como fallback
+          tryMpegTS(channel, myPlayId, timeout);
         }
       });
-    } else {
-      video.src = url;
-      video.onloadeddata = () => {
-        clearTimeout(timeout);
-        video.play().catch(() => {});
-      };
-      video.onerror = () => {
-        clearTimeout(timeout);
-        showPlaybackError(channel);
-      };
-      video.load();
+    }
+    // 2. Tenta MPEG-TS para streams IPTV
+    else if ((format === 'mpegts' || format === 'flv' || format === 'auto') && window.mpegts && mpegts.isSupported()) {
+      tryMpegTS(channel, myPlayId, timeout);
+    }
+    // 3. Fallback nativo
+    else {
+      tryNative(channel, myPlayId, timeout);
     }
   } catch (e) {
     clearTimeout(timeout);
-    showPlaybackError(channel);
+    showPlaybackError(channel, 'Erro: ' + e.message);
   }
   
-  // Atualiza visual dos cards
   renderChannels();
-  
-  // Scroll para o player
   playerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function showPlaybackError(channel) {
+function tryMpegTS(channel, myPlayId, timeout) {
+  const video = document.getElementById('videoPlayer');
+  const url = channel.url;
+  
+  setStatus('connecting', 'Conectando via MPEG-TS...', 'MPEG-TS');
+  
+  try {
+    mpegtsPlayer = mpegts.createPlayer({
+      type: url.toLowerCase().endsWith('.flv') ? 'flv' : 'mpegts',
+      url: url,
+      isLive: true
+    }, {
+      enableWorker: false,
+      enableStashBuffer: true,
+      stashInitialSize: 128,
+      liveBufferLatencyChasing: true,
+      liveBufferLatencyMaxLatency: 1.5,
+      autoCleanupSourceBuffer: true
+    });
+    
+    mpegtsPlayer.attachMediaElement(video);
+    mpegtsPlayer.load();
+    
+    mpegtsPlayer.on(mpegts.Events.ERROR, (errorType, errorDetail, errorInfo) => {
+      if (myPlayId !== currentPlayId) return;
+      console.warn('MPEG-TS Error:', errorType, errorDetail);
+      // Se MPEG-TS falhar, tenta nativo
+      if (errorType === 'media' || errorType === 'network') {
+        clearTimeout(timeout);
+        tryNative(channel, myPlayId, timeout);
+      }
+    });
+    
+    mpegtsPlayer.on(mpegts.Events.LOADING_COMPLETE, () => {});
+    
+    video.onplaying = () => {
+      if (myPlayId !== currentPlayId) return;
+      clearTimeout(timeout);
+      setStatus('playing', 'Reproduzindo', 'MPEG-TS');
+    };
+    
+    mpegtsPlayer.play().catch(() => {
+      if (myPlayId !== currentPlayId) return;
+      tryNative(channel, myPlayId, timeout);
+    });
+  } catch (e) {
+    tryNative(channel, myPlayId, timeout);
+  }
+}
+
+function tryNative(channel, myPlayId, timeout) {
+  const video = document.getElementById('videoPlayer');
+  const url = channel.url;
+  
+  setStatus('connecting', 'Tentando reprodução nativa...', 'NATIVO');
+  
+  video.onloadeddata = () => {
+    if (myPlayId !== currentPlayId) return;
+    clearTimeout(timeout);
+    setStatus('playing', 'Reproduzindo', 'NATIVO');
+    video.play().catch(() => {});
+  };
+  
+  video.onplaying = () => {
+    if (myPlayId !== currentPlayId) return;
+    clearTimeout(timeout);
+    setStatus('playing', 'Reproduzindo', 'NATIVO');
+  };
+  
+  video.onerror = () => {
+    if (myPlayId !== currentPlayId) return;
+    clearTimeout(timeout);
+    showPlaybackError(channel, 'Formato não suportado pelo navegador');
+  };
+  
+  video.src = url;
+  video.load();
+}
+
+function showPlaybackError(channel, reason = '') {
   const video = document.getElementById('videoPlayer');
   const placeholder = document.getElementById('videoPlaceholder');
   const msg = document.getElementById('placeholderMsg');
@@ -527,20 +715,21 @@ function showPlaybackError(channel) {
   
   video.style.display = 'none';
   placeholder.style.display = 'grid';
+  setStatus('error', 'Erro na reprodução', 'FALHOU');
   msg.textContent = `Não foi possível reproduzir "${channel.name}"`;
-  warn.textContent = '';
+  warn.textContent = reason;
   
   errBox.innerHTML = `
     <div class="err-box">
-      <strong>⚠ Stream bloqueado pelo navegador</strong>
+      <strong>⚠ Stream não pode ser reproduzido no navegador</strong>
       Navegadores bloqueiam streams IPTV por políticas de segurança (CORS/mixed content).<br><br>
-      <strong>Soluções:</strong>
+      <strong>Soluções recomendadas:</strong>
       <ol>
-        <li><strong>VLC Media Player</strong> (recomendado):<br>
+        <li><strong>VLC Media Player</strong> (melhor opção):<br>
           Abra o VLC → Mídia → Abrir Transmissão de Rede → Cole a URL abaixo
         </li>
         <li><strong>IPTV Smarters</strong> ou <strong>TiviMate</strong> (Android/Smart TV)</li>
-        <li>Importe a lista M3U completa no seu player preferido</li>
+        <li><strong>Kodi</strong> com addon PVR IPTV Simple Client</li>
       </ol>
       <strong>URL do stream:</strong>
       <code>${channel.url}</code>
@@ -574,19 +763,10 @@ function openInNewTab() {
 
 function closePlayer() {
   const playerSection = document.getElementById('playerSection');
-  const video = document.getElementById('videoPlayer');
-  
   playerSection.classList.remove('show');
-  
-  if (hls) {
-    try { hls.destroy(); } catch(e) {}
-    hls = null;
-  }
-  
-  video.removeAttribute('src');
-  video.load();
+  currentPlayId++;
+  cleanupPlayer();
   currentChannel = null;
-  
   renderChannels();
 }
 
@@ -604,6 +784,68 @@ function copyUrl(url) {
     });
 }
 
+async function testStream(url) {
+  for (const proxy of CORS_PROXIES) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      const response = await fetch(proxy + encodeURIComponent(url), {
+        signal: controller.signal, mode: 'cors'
+      });
+      clearTimeout(timeoutId);
+      if (response.ok) return true;
+    } catch (e) { continue; }
+  }
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    await fetch(url, { method: 'HEAD', signal: controller.signal, mode: 'no-cors' });
+    clearTimeout(timeoutId);
+    return true;
+  } catch (e) { return false; }
+}
+
+async function testAllStreams() {
+  if (isTesting) { showToast('Teste já em andamento...', 'error'); return; }
+  isTesting = true;
+  const testBtn = document.getElementById('testBtn');
+  testBtn.disabled = true;
+  testBtn.textContent = '⏳ Testando...';
+  
+  const progressDiv = document.getElementById('testProgress');
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
+  const progressStats = document.getElementById('progressStats');
+  progressDiv.classList.add('show');
+  
+  const total = allChannels.length;
+  let tested = 0, working = 0;
+  const batchSize = 10;
+  
+  for (let i = 0; i < total; i += batchSize) {
+    const batch = allChannels.slice(i, i + batchSize);
+    await Promise.all(batch.map(async (channel) => {
+      const result = await testStream(channel.url);
+      channel.working = result;
+      channel.tested = true;
+      if (result) working++;
+      tested++;
+      const percent = (tested / total) * 100;
+      progressFill.style.width = percent + '%';
+      progressText.textContent = `Testando streams... ${Math.round(percent)}%`;
+      progressStats.textContent = `${tested} / ${total} testados · ${working} funcionando`;
+    }));
+    renderChannels();
+    updateHeader();
+  }
+  
+  isTesting = false;
+  testBtn.disabled = false;
+  testBtn.textContent = '🔍 Testar Streams';
+  progressText.textContent = 'Teste concluído!';
+  showToast(`${working} de ${total} streams funcionando!`, 'success');
+}
+
 function generateFullM3U() {
   let out = '#EXTM3U\n';
   allChannels.forEach(ch => {
@@ -614,10 +856,7 @@ function generateFullM3U() {
 }
 
 function exportM3U() {
-  if (allChannels.length === 0) {
-    showToast('Nenhum canal carregado', 'error');
-    return;
-  }
+  if (allChannels.length === 0) { showToast('Nenhum canal carregado', 'error'); return; }
   const content = generateFullM3U();
   const blob = new Blob([content], { type: 'audio/x-mpegurl' });
   const url = URL.createObjectURL(blob);
@@ -632,41 +871,21 @@ function exportM3U() {
 }
 
 function copyAllM3U() {
-  if (allChannels.length === 0) {
-    showToast('Nenhum canal carregado', 'error');
-    return;
-  }
-  const content = generateFullM3U();
-  navigator.clipboard.writeText(content)
-    .then(() => showToast(`Lista M3U completa copiada (${allChannels.length} canais)!`, 'success'))
+  if (allChannels.length === 0) { showToast('Nenhum canal carregado', 'error'); return; }
+  navigator.clipboard.writeText(generateFullM3U())
+    .then(() => showToast(`Lista M3U copiada (${allChannels.length} canais)!`, 'success'))
     .catch(() => showToast('Falha ao copiar', 'error'));
 }
 
 async function loadExternalM3U() {
   const url = document.getElementById('m3uUrlInput').value.trim();
-  if (!url) {
-    showToast('Cole uma URL válida', 'error');
-    return;
-  }
-  
+  if (!url) { showToast('Cole uma URL válida', 'error'); return; }
   showToast('Carregando lista...', 'success');
   const text = await loadM3UFromUrl(url);
-  
-  if (!text) {
-    showToast('Falha ao carregar lista', 'error');
-    return;
-  }
-  
+  if (!text) { showToast('Falha ao carregar lista', 'error'); return; }
   const newChannels = parseM3U(text, 'Lista Customizada');
-  if (newChannels.length === 0) {
-    showToast('Nenhum canal encontrado na lista', 'error');
-    return;
-  }
-  
-  newChannels.forEach((ch, idx) => {
-    ch.id = allChannels.length + idx;
-  });
-  
+  if (newChannels.length === 0) { showToast('Nenhum canal encontrado', 'error'); return; }
+  newChannels.forEach((ch, idx) => { ch.id = allChannels.length + idx; });
   allChannels = [...allChannels, ...newChannels];
   renderAll();
   showToast(`${newChannels.length} canais adicionados!`, 'success');
@@ -682,79 +901,82 @@ function showToast(msg, type = 'success') {
   window._toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
 }
 
+function renderFilters() {
+  const working = allChannels.filter(ch => ch.working === true).length;
+  const notWorking = allChannels.filter(ch => ch.working === false).length;
+  const untested = allChannels.filter(ch => ch.working === null).length;
+  const el = document.getElementById('filterList');
+  el.innerHTML = `
+    <div class="cat-item ${activeFilter === 'all' ? 'active' : ''}" data-filter="all">
+      <span>📺 Todos</span><span class="cat-count">${allChannels.length}</span>
+    </div>
+    <div class="cat-item ${activeFilter === 'working' ? 'active' : ''}" data-filter="working">
+      <span>✅ Funcionando</span><span class="cat-count">${working}</span>
+    </div>
+    <div class="cat-item ${activeFilter === 'not-working' ? 'active' : ''}" data-filter="not-working">
+      <span>❌ Não Funciona</span><span class="cat-count">${notWorking}</span>
+    </div>
+    ${untested > 0 ? `<div class="cat-item ${activeFilter === 'untested' ? 'active' : ''}" data-filter="untested">
+      <span>❓ Não Testado</span><span class="cat-count">${untested}</span>
+    </div>` : ''}
+  `;
+  el.querySelectorAll('.cat-item').forEach(item => {
+    item.addEventListener('click', () => { activeFilter = item.dataset.filter; renderAll(); });
+  });
+}
+
 function renderGroups() {
   const groupMap = {};
-  allChannels.forEach(ch => { 
-    groupMap[ch.group] = groupMap[ch.group] || 0; 
-    groupMap[ch.group]++; 
-  });
-  
+  allChannels.forEach(ch => { groupMap[ch.group] = groupMap[ch.group] || 0; groupMap[ch.group]++; });
   const groups = Object.keys(groupMap).sort();
   const el = document.getElementById('groupList');
-  
   let html = `<div class="cat-item ${activeGroup === 'all' ? 'active' : ''}" data-group="all">
     <span>Todos os Grupos</span><span class="cat-count">${allChannels.length}</span>
   </div>`;
-  
   groups.forEach(group => {
     html += `<div class="cat-item ${activeGroup === group ? 'active' : ''}" data-group="${group}">
       <span>${group}</span><span class="cat-count">${groupMap[group]}</span>
     </div>`;
   });
-  
   el.innerHTML = html;
   el.querySelectorAll('.cat-item').forEach(item => {
-    item.addEventListener('click', () => { 
-      activeGroup = item.dataset.group; 
-      renderAll(); 
-    });
+    item.addEventListener('click', () => { activeGroup = item.dataset.group; renderAll(); });
   });
 }
 
 function renderCategories() {
   const catMap = {};
-  allChannels.forEach(ch => { 
-    catMap[ch.subCat] = catMap[ch.subCat] || 0; 
-    catMap[ch.subCat]++; 
-  });
-  
+  allChannels.forEach(ch => { catMap[ch.subCat] = catMap[ch.subCat] || 0; catMap[ch.subCat]++; });
   const categories = Object.keys(catMap).sort();
   const el = document.getElementById('catList');
-  
   let html = `<div class="cat-item ${activeCategory === 'all' ? 'active' : ''}" data-cat="all">
     <span>Todas as Categorias</span><span class="cat-count">${allChannels.length}</span>
   </div>`;
-  
   categories.forEach(cat => {
     html += `<div class="cat-item ${activeCategory === cat ? 'active' : ''}" data-cat="${cat}">
       <span>${cat}</span><span class="cat-count">${catMap[cat]}</span>
     </div>`;
   });
-  
   el.innerHTML = html;
   el.querySelectorAll('.cat-item').forEach(item => {
-    item.addEventListener('click', () => { 
-      activeCategory = item.dataset.cat; 
-      renderAll(); 
-    });
+    item.addEventListener('click', () => { activeCategory = item.dataset.cat; renderAll(); });
   });
 }
 
 function getFilteredChannels() {
   let filtered = allChannels;
+  if (activeFilter === 'working') filtered = filtered.filter(ch => ch.working === true);
+  else if (activeFilter === 'not-working') filtered = filtered.filter(ch => ch.working === false);
+  else if (activeFilter === 'untested') filtered = filtered.filter(ch => ch.working === null);
   if (activeGroup !== 'all') filtered = filtered.filter(ch => ch.group === activeGroup);
   if (activeCategory !== 'all') filtered = filtered.filter(ch => ch.subCat === activeCategory);
-  if (currentSearch) { 
-    const q = currentSearch.toLowerCase(); 
-    filtered = filtered.filter(ch => ch.name.toLowerCase().includes(q)); 
-  }
+  if (currentSearch) { const q = currentSearch.toLowerCase(); filtered = filtered.filter(ch => ch.name.toLowerCase().includes(q)); }
   return filtered;
 }
 
 function renderChannels() {
   const container = document.getElementById('channelList');
   const filtered = getFilteredChannels();
-
   if (filtered.length === 0) {
     container.innerHTML = `<div class="empty">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -762,12 +984,16 @@ function renderChannels() {
     </div>`;
     return;
   }
-
   container.innerHTML = filtered.map(ch => {
     const logoHtml = ch.logo ? `<img src="${ch.logo}" alt="${ch.name}" onerror="this.parentElement.innerHTML='${getInitials(ch.name)}'">` : getInitials(ch.name);
     const isPlaying = currentChannel && currentChannel.id === ch.id;
+    let statusClass = '', statusTag = '';
+    if (ch.tested) {
+      if (ch.working) { statusClass = 'working'; statusTag = '<span class="ch-tag status-ok">✓ Funciona</span>'; }
+      else { statusClass = 'not-working'; statusTag = '<span class="ch-tag status-fail">✗ Não Funciona</span>'; }
+    }
     return `
-    <div class="channel-card ${isPlaying ? 'playing' : ''}">
+    <div class="channel-card ${isPlaying ? 'playing' : ''} ${statusClass}">
       <div class="ch-header">
         <div class="ch-logo">${logoHtml}</div>
         <div class="ch-info">
@@ -775,6 +1001,7 @@ function renderChannels() {
           <div class="ch-meta">
             <span class="ch-tag cat">${ch.subCat}</span>
             <span class="ch-tag group">${ch.group}</span>
+            ${statusTag}
           </div>
         </div>
       </div>
@@ -793,53 +1020,51 @@ function renderChannels() {
 
 function updateHeader() {
   let title = 'Todos os Canais';
-  if (activeGroup !== 'all') title = activeGroup;
-  if (activeCategory !== 'all') title += ` · ${activeCategory}`;
-  
+  if (activeFilter === 'working') title = '✅ Streams Funcionando';
+  else if (activeFilter === 'not-working') title = '❌ Streams Não Funcionam';
+  else if (activeGroup !== 'all') title = activeGroup;
+  if (activeCategory !== 'all' && activeFilter === 'all') title += ` · ${activeCategory}`;
   document.getElementById('viewTitle').textContent = title;
   const filtered = getFilteredChannels();
   document.getElementById('viewSubtitle').textContent = `${filtered.length} canais disponíveis`;
+  const working = allChannels.filter(ch => ch.working === true).length;
   document.getElementById('statTotal').textContent = allChannels.length;
+  document.getElementById('statWorking').textContent = working;
   document.getElementById('statCats').textContent = new Set(allChannels.map(c => c.subCat)).size;
   document.getElementById('statGroups').textContent = new Set(allChannels.map(c => c.group)).size;
 }
 
-function renderAll() { 
-  renderGroups(); 
-  renderCategories(); 
-  renderChannels(); 
-  updateHeader(); 
-}
+function renderAll() { renderFilters(); renderGroups(); renderCategories(); renderChannels(); updateHeader(); }
 
 let searchTimer;
 document.getElementById('searchInput').addEventListener('input', (e) => {
   clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => { 
-    currentSearch = e.target.value; 
-    renderChannels(); 
-    updateHeader(); 
-  }, 150);
+  searchTimer = setTimeout(() => { currentSearch = e.target.value; renderChannels(); updateHeader(); }, 150);
 });
 
-// Player controls
 document.getElementById('closePlayerBtn').addEventListener('click', closePlayer);
 document.getElementById('copyPlayerUrlBtn').addEventListener('click', copyCurrentUrl);
 
-// Carrega lista padrão ao iniciar
 async function init() {
-  const text = await loadM3UFromUrl(DEFAULT_M3U_URL);
-  
-  if (text) {
-    allChannels = parseM3U(text, 'Lista IPTV Legal');
+  let totalChannels = 0, loadedSources = 0;
+  for (const source of M3U_SOURCES) {
+    const text = await loadM3UFromUrl(source.url);
+    if (text) {
+      const channels = parseM3U(text, source.name);
+      channels.forEach((ch) => { ch.id = allChannels.length; allChannels.push(ch); });
+      totalChannels += channels.length;
+      loadedSources++;
+    }
+  }
+  if (totalChannels > 0) {
     renderAll();
-    showToast(`${allChannels.length} canais carregados! Clique em ▶ Assistir para tentar reproduzir`, 'success');
+    showToast(`${totalChannels} canais carregados de ${loadedSources} fontes!`, 'success');
   } else {
-    document.getElementById('channelList').innerHTML = `
-      <div class="empty">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <p>Falha ao carregar lista padrão</p>
-        <p style="margin-top:8px; font-size:12px;">Adicione uma URL M3U manualmente</p>
-      </div>`;
+    document.getElementById('channelList').innerHTML = `<div class="empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <p>Falha ao carregar listas</p>
+      <p style="margin-top:8px; font-size:12px;">Adicione uma URL M3U manualmente</p>
+    </div>`;
     document.getElementById('viewTitle').textContent = 'Erro ao Carregar';
     document.getElementById('viewSubtitle').textContent = 'Adicione uma lista M3U manualmente';
   }
