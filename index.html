@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BrasilTV — Player IPTV com Cloud Sync</title>
+<title>BrasilTV — Player IPTV Completo</title>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.0/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5.0.0/index.css">
@@ -22,7 +22,7 @@
     background-image: radial-gradient(circle at 10% 0%, rgba(0,200,83,0.08) 0%, transparent 40%),
                       radial-gradient(circle at 90% 100%, rgba(255,214,0,0.06) 0%, transparent 40%);
   }
-  .app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+  .app { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
   .sidebar {
     background: rgba(17,24,39,0.85); backdrop-filter: blur(20px);
     border-right: 1px solid var(--border); padding: 24px 18px;
@@ -37,32 +37,53 @@
   .logo-mark svg { width: 22px; height: 22px; }
   .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
   .logo-text span { color: var(--accent-2); }
-  .sync-bar { display: flex; gap: 6px; margin-bottom: 16px; }
-  .sync-btn {
-    flex: 1; padding: 9px; border-radius: 8px; background: var(--bg-3);
-    border: 1px solid var(--border); color: var(--text); cursor: pointer;
-    font-size: 12px; display: flex; align-items: center; justify-content: center;
-    gap: 6px; transition: all 0.2s; font-weight: 500;
+
+  .info-box {
+    background: rgba(77,171,247,0.08); border: 1px solid rgba(77,171,247,0.25);
+    border-radius: 10px; padding: 14px; margin-bottom: 16px;
+    font-size: 12px; line-height: 1.5; color: #a8c8e8;
   }
-  .sync-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .sync-btn.primary {
-    background: linear-gradient(135deg, var(--accent), #00a844);
-    border-color: transparent; color: #000; font-weight: 600;
+  .info-box strong { color: var(--info); display: block; margin-bottom: 6px; font-size: 13px; }
+  .info-box ol { margin: 8px 0 8px 18px; }
+  .info-box li { margin: 4px 0; }
+  .info-box a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .info-box a:hover { text-decoration: underline; }
+
+  .export-box {
+    background: rgba(0,200,83,0.08); border: 1px solid rgba(0,200,83,0.25);
+    border-radius: 10px; padding: 12px; margin-bottom: 16px;
+    display: flex; flex-direction: column; gap: 8px;
   }
-  .sync-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,200,83,0.3); }
-  .sync-btn svg { width: 14px; height: 14px; }
-  .sync-btn.loading svg { animation: spin 1s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .sync-status {
-    font-size: 11px; color: var(--text-dim); padding: 6px 10px;
-    border-radius: 6px; background: var(--bg-3); margin-bottom: 16px;
-    display: flex; align-items: center; gap: 6px;
+  .export-btn {
+    padding: 10px; background: var(--accent); color: #000; border: none;
+    border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;
+    transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;
   }
-  .sync-status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim); }
-  .sync-status.online .dot { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
-  .sync-status.error .dot { background: var(--danger); }
-  .sync-status.syncing .dot { background: var(--accent-2); animation: pulse 1s infinite; }
-  .search { position: relative; margin-bottom: 18px; }
+  .export-btn:hover { background: #00a844; transform: translateY(-1px); }
+  .export-btn.secondary { background: var(--bg-3); color: var(--text); border: 1px solid var(--border); }
+  .export-btn.secondary:hover { border-color: var(--accent); color: var(--accent); background: var(--bg-3); }
+
+  .url-input-box {
+    background: var(--bg-3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px; margin-bottom: 16px;
+  }
+  .url-input-box label {
+    display: block; font-size: 11px; color: var(--text-dim);
+    margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
+  }
+  .url-input-box input {
+    width: 100%; padding: 8px 10px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 6px; color: var(--text);
+    font-size: 12px; margin-bottom: 8px;
+  }
+  .url-input-box input:focus { outline: none; border-color: var(--accent); }
+  .url-input-box button {
+    width: 100%; padding: 8px; background: var(--accent); color: #000;
+    border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;
+  }
+  .url-input-box button:hover { background: #00a844; }
+
+  .search { position: relative; margin-bottom: 16px; }
   .search input {
     width: 100%; padding: 11px 14px 11px 38px; background: var(--bg-3);
     border: 1px solid var(--border); border-radius: 10px; color: var(--text);
@@ -84,34 +105,30 @@
   }
   .cat-count { font-size: 11px; background: var(--bg-3); padding: 2px 7px; border-radius: 10px; color: var(--text-dim); }
   .cat-item.active .cat-count { background: rgba(0,200,83,0.2); color: var(--accent); }
+
   .main { padding: 28px 32px; }
-  .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
-  .header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.8px; }
-  .header p { color: var(--text-dim); font-size: 14px; margin-top: 4px; }
-  .stats { display: flex; gap: 10px; }
-  .stat { background: var(--card); border: 1px solid var(--border); padding: 10px 16px; border-radius: 10px; display: flex; flex-direction: column; }
-  .stat-val { font-size: 20px; font-weight: 700; font-family: 'Space Grotesk'; }
-  .stat-lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.8px; }
-  .stat-val.green { color: var(--accent); }
-  .stat-val.yellow { color: var(--accent-2); }
-  .stat-val.blue { color: var(--info); }
-  .stat-val.purple { color: var(--purple); }
-  .view-toggle { display: flex; gap: 6px; background: var(--card); border: 1px solid var(--border); padding: 4px; border-radius: 10px; }
-  .view-btn { background: transparent; border: none; color: var(--text-dim); padding: 6px 10px; border-radius: 7px; cursor: pointer; display: grid; place-items: center; }
-  .view-btn.active { background: var(--bg-3); color: var(--text); }
-  .view-btn svg { width: 16px; height: 16px; }
-  .player-wrap {
+  
+  /* PLAYER */
+  .player-section {
     background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-    overflow: hidden; margin-bottom: 28px; display: none; animation: slideDown 0.3s ease;
+    overflow: hidden; margin-bottom: 28px; display: none;
   }
-  .player-wrap.show { display: block; }
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-  .player-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--border); }
-  .now-playing { display: flex; align-items: center; gap: 10px; }
-  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(255,71,87,0.7); } 50% { box-shadow: 0 0 0 8px rgba(255,71,87,0); } }
-  .now-playing-text { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-  .now-playing-name { font-weight: 600; font-size: 15px; }
+  .player-section.show { display: block; }
+  .player-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 18px; border-bottom: 1px solid var(--border);
+  }
+  .player-title { display: flex; align-items: center; gap: 10px; }
+  .live-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--danger);
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(255,71,87,0.7); }
+    50% { box-shadow: 0 0 0 8px rgba(255,71,87,0); }
+  }
+  .player-title-text { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+  .player-channel-name { font-weight: 600; font-size: 15px; }
   .player-actions { display: flex; gap: 8px; }
   .icon-btn {
     background: var(--bg-3); border: 1px solid var(--border); color: var(--text);
@@ -121,8 +138,13 @@
   .icon-btn:hover { background: var(--border); }
   .icon-btn.danger:hover { background: var(--danger); border-color: var(--danger); }
   .icon-btn svg { width: 16px; height: 16px; }
-  .video-box { position: relative; background: #000; aspect-ratio: 16/9; }
-  .video-box video { width: 100%; height: 100%; display: block; }
+  
+  .video-container {
+    position: relative; background: #000; aspect-ratio: 16/9;
+  }
+  .video-container video {
+    width: 100%; height: 100%; display: block; background: #000;
+  }
   .video-placeholder {
     position: absolute; inset: 0; display: grid; place-items: center;
     background: radial-gradient(circle at center, #1a2234, #000);
@@ -131,33 +153,53 @@
   .video-placeholder svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.5; }
   .video-placeholder p { font-size: 14px; max-width: 500px; line-height: 1.5; }
   .video-placeholder .warn { color: var(--accent-2); font-size: 12px; margin-top: 8px; }
-  .proxy-status { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
-  .proxy-row { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,0.03); }
-  .proxy-row .indicator { width: 8px; height: 8px; border-radius: 50%; background: var(--text-dim); }
-  .proxy-row.trying .indicator { background: var(--accent-2); animation: pulse 1s infinite; }
-  .proxy-row.success .indicator { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
-  .proxy-row.fail .indicator { background: var(--danger); }
-  .proxy-row.success { color: var(--accent); }
-  .proxy-row.fail { color: var(--text-dim); text-decoration: line-through; opacity: 0.6; }
-  .copy-url-btn {
-    margin-top: 12px; padding: 8px 16px; background: var(--bg-3);
-    border: 1px solid var(--border); color: var(--text); border-radius: 8px;
-    cursor: pointer; font-size: 12px; transition: all 0.2s;
+  .video-placeholder .err-box {
+    margin-top: 14px; padding: 16px; background: rgba(255,71,87,0.1);
+    border: 1px solid rgba(255,71,87,0.3); border-radius: 8px;
+    font-size: 12px; color: #ff8a94; text-align: left; max-width: 500px;
   }
-  .copy-url-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
-  .grid.list-view { grid-template-columns: 1fr; }
-  .channel {
+  .video-placeholder .err-box strong { color: var(--danger); display: block; margin-bottom: 8px; }
+  .video-placeholder .err-box ol { margin: 10px 0; padding-left: 20px; }
+  .video-placeholder .err-box li { margin: 6px 0; }
+  .video-placeholder .err-box code {
+    display: block; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.3);
+    border-radius: 4px; font-size: 11px; word-break: break-all; color: var(--accent);
+  }
+  .player-btns { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; justify-content: center; }
+  .player-btns button {
+    padding: 10px 16px; background: var(--bg-3); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; cursor: pointer; font-size: 13px;
+    transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;
+    font-weight: 500;
+  }
+  .player-btns button:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+  .player-btns button.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
+  .player-btns button.primary:hover { background: #00a844; color: #000; }
+
+  .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+  .header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.8px; }
+  .header p { color: var(--text-dim); font-size: 14px; margin-top: 4px; }
+  .stats { display: flex; gap: 10px; flex-wrap: wrap; }
+  .stat { background: var(--card); border: 1px solid var(--border); padding: 10px 16px; border-radius: 10px; display: flex; flex-direction: column; }
+  .stat-val { font-size: 20px; font-weight: 700; font-family: 'Space Grotesk'; }
+  .stat-lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.8px; }
+  .stat-val.green { color: var(--accent); }
+  .stat-val.yellow { color: var(--accent-2); }
+  .stat-val.blue { color: var(--info); }
+
+  .loading {
+    text-align: center; padding: 60px 20px; color: var(--text-dim);
+  }
+  .loading svg { width: 48px; height: 48px; margin-bottom: 12px; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .channel-card {
     background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-    padding: 14px; cursor: pointer; transition: all 0.2s; position: relative;
-    overflow: hidden; display: flex; flex-direction: column; gap: 10px;
+    padding: 16px; margin-bottom: 12px; transition: all 0.2s;
   }
-  .channel::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,200,83,0.08), transparent 60%); opacity: 0; transition: opacity 0.2s; }
-  .channel:hover { transform: translateY(-2px); border-color: rgba(0,200,83,0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-  .channel:hover::before { opacity: 1; }
-  .channel.playing { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,200,83,0.2), 0 10px 30px rgba(0,200,83,0.15); }
-  .channel.playing::before { opacity: 1; }
-  .ch-top { display: flex; align-items: center; gap: 12px; position: relative; z-index: 1; }
+  .channel-card:hover { border-color: rgba(0,200,83,0.4); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .channel-card.playing { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,200,83,0.2); }
+  .ch-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
   .ch-logo {
     width: 48px; height: 48px; border-radius: 10px;
     background: linear-gradient(135deg, var(--bg-3), var(--bg-2));
@@ -167,77 +209,39 @@
   }
   .ch-logo img { width: 100%; height: 100%; object-fit: contain; background: #fff; padding: 4px; }
   .ch-info { flex: 1; min-width: 0; }
-  .ch-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ch-group { font-size: 11px; color: var(--text-dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ch-badges { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
-  .ch-source { display: inline-block; font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(77,171,247,0.15); color: var(--info); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-  .ch-source.premium { background: rgba(255,214,0,0.15); color: var(--accent-2); }
-  .ch-source.vip { background: rgba(156,136,255,0.15); color: var(--purple); }
-  .ch-source.cloud { background: rgba(0,200,83,0.15); color: var(--accent); }
-  .fav-btn {
-    position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.4);
-    backdrop-filter: blur(8px); border: 1px solid var(--border);
-    width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
-    cursor: pointer; color: var(--text-dim); z-index: 2; transition: all 0.2s;
+  .ch-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+  .ch-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .ch-tag {
+    font-size: 10px; padding: 2px 8px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
   }
-  .fav-btn:hover { color: var(--accent-2); transform: scale(1.1); }
-  .fav-btn.active { color: var(--accent-2); background: rgba(255,214,0,0.15); border-color: var(--accent-2); }
-  .fav-btn svg { width: 14px; height: 14px; }
-  .ch-play {
-    position: absolute; bottom: 14px; right: 14px; width: 32px; height: 32px;
-    border-radius: 50%; background: var(--accent); color: #000;
-    display: grid; place-items: center; opacity: 0; transform: scale(0.8);
-    transition: all 0.2s; z-index: 1;
+  .ch-tag.cat { background: rgba(77,171,247,0.15); color: var(--info); }
+  .ch-tag.group { background: rgba(156,136,255,0.15); color: var(--purple); }
+  .ch-url-box {
+    background: var(--bg-3); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px; margin-bottom: 10px;
   }
-  .channel:hover .ch-play { opacity: 1; transform: scale(1); }
-  .ch-play svg { width: 14px; height: 14px; }
-  .list-view .channel { flex-direction: row; align-items: center; padding: 12px 16px; }
-  .list-view .ch-top { flex: 1; }
-  .list-view .ch-play { position: static; opacity: 1; transform: none; }
-  .list-view .fav-btn { position: static; }
-  .empty { text-align: center; padding: 60px 20px; color: var(--text-dim); grid-column: 1/-1; }
+  .ch-url-label { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .ch-url {
+    font-family: monospace; font-size: 12px; color: var(--accent);
+    word-break: break-all; line-height: 1.4;
+  }
+  .ch-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ch-btn {
+    padding: 8px 14px; background: var(--bg-3); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; cursor: pointer; font-size: 12px;
+    transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;
+    font-weight: 500;
+  }
+  .ch-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+  .ch-btn.primary { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
+  .ch-btn.primary:hover { background: #00a844; color: #000; }
+  .ch-btn.play { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; }
+  .ch-btn.play:hover { background: #00a844; color: #000; }
+
+  .empty { text-align: center; padding: 60px 20px; color: var(--text-dim); }
   .empty svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.4; }
-  .modal-backdrop {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
-    z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px;
-  }
-  .modal-backdrop.show { display: flex; }
-  .modal {
-    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-    max-width: 560px; width: 100%; max-height: 85vh; overflow-y: auto; animation: modalIn 0.25s ease;
-  }
-  @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-  .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-  .modal-header h2 { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 700; }
-  .modal-body { padding: 24px; }
-  .form-group { margin-bottom: 18px; }
-  .form-group label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
-  .form-group input, .form-group textarea {
-    width: 100%; padding: 10px 12px; background: var(--bg-3);
-    border: 1px solid var(--border); border-radius: 8px; color: var(--text);
-    font-size: 13px; font-family: inherit;
-  }
-  .form-group textarea { min-height: 80px; resize: vertical; font-family: monospace; font-size: 12px; }
-  .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--accent); }
-  .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
-  .toggle-row:last-child { border-bottom: none; }
-  .toggle-label { font-size: 14px; }
-  .toggle-label small { display: block; color: var(--text-dim); font-size: 11px; margin-top: 2px; }
-  .toggle { position: relative; width: 42px; height: 24px; background: var(--bg-3); border-radius: 12px; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border); }
-  .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--text-dim); transition: all 0.2s; }
-  .toggle.on { background: var(--accent); border-color: var(--accent); }
-  .toggle.on::after { left: 20px; background: #000; }
-  .btn {
-    padding: 10px 18px; border-radius: 8px; border: 1px solid var(--border);
-    background: var(--bg-3); color: var(--text); cursor: pointer;
-    font-size: 13px; font-weight: 500; transition: all 0.2s;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  .btn:hover { border-color: var(--accent); color: var(--accent); }
-  .btn.primary { background: linear-gradient(135deg, var(--accent), #00a844); border-color: transparent; color: #000; font-weight: 600; }
-  .btn.primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,200,83,0.3); color: #000; }
-  .btn.danger { background: var(--danger); border-color: transparent; color: #fff; }
-  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+
   .toast {
     position: fixed; bottom: 24px; right: 24px; background: var(--card);
     border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px;
@@ -247,10 +251,9 @@
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast.success { border-color: var(--accent); }
   .toast.error { border-color: var(--danger); }
-  .toast .toast-icon { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; }
-  .toast.success .toast-icon { background: rgba(0,200,83,0.2); color: var(--accent); }
+  .toast .toast-icon { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; background: rgba(0,200,83,0.2); color: var(--accent); }
   .toast.error .toast-icon { background: rgba(255,71,87,0.2); color: var(--danger); }
-  .toast.info .toast-icon { background: rgba(77,171,247,0.2); color: var(--info); }
+
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
@@ -259,7 +262,6 @@
     .app { grid-template-columns: 1fr; }
     .sidebar { position: static; height: auto; max-height: 60vh; }
     .main { padding: 20px; }
-    .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
   }
 </style>
 </head>
@@ -267,104 +269,94 @@
 <div class="app">
   <aside class="sidebar">
     <div class="logo">
-      <div class="logo-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      </div>
+      <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
       <div class="logo-text">Brasil<span>TV</span></div>
     </div>
-    <div class="sync-bar">
-      <button class="sync-btn primary" id="syncBtn" title="Sincronizar com nuvem">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-        Sincronizar
-      </button>
-      <button class="sync-btn" id="settingsBtn" title="Configurações">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      </button>
+
+    <div class="info-box">
+      <strong>📺 Como assistir</strong>
+      <ol>
+        <li>Clique em <strong>▶ Assistir</strong> para tentar reproduzir direto</li>
+        <li>Se falhar, use <strong>VLC</strong>: Mídia → Abrir Transmissão de Rede</li>
+        <li>Ou importe a lista M3U completa</li>
+      </ol>
+      <a href="https://www.videolan.org/vlc/" target="_blank">⬇ Baixar VLC →</a>
     </div>
-    <div class="sync-status" id="syncStatus"><span class="dot"></span><span id="syncStatusText">Verificando conexão...</span></div>
+
+    <div class="export-box">
+      <button class="export-btn" onclick="exportM3U()">⬇ Baixar Lista M3U Completa</button>
+      <button class="export-btn secondary" onclick="copyAllM3U()">📋 Copiar Lista M3U</button>
+    </div>
+
+    <div class="url-input-box">
+      <label>Adicionar Lista M3U</label>
+      <input type="text" id="m3uUrlInput" placeholder="Cole a URL da lista M3U...">
+      <button onclick="loadExternalM3U()">Carregar Lista</button>
+    </div>
+
     <div class="search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="searchInput" placeholder="Buscar canal...">
     </div>
-    <div class="cat-title">Atalhos</div>
-    <div class="cat-list" id="shortcutList"></div>
-    <div class="cat-title">Fontes</div>
-    <div class="cat-list" id="sourceList"></div>
+    <div class="cat-title">Grupos</div>
+    <div class="cat-list" id="groupList"></div>
     <div class="cat-title">Categorias</div>
     <div class="cat-list" id="catList"></div>
   </aside>
   <main class="main">
-    <div class="header">
-      <div>
-        <h1 id="viewTitle">Todos os Canais</h1>
-        <p id="viewSubtitle">Selecione um canal para assistir ao vivo</p>
-      </div>
-      <div style="display:flex; gap:14px; align-items:center;">
-        <div class="stats">
-          <div class="stat"><div class="stat-val green" id="statTotal">0</div><div class="stat-lbl">Canais</div></div>
-          <div class="stat"><div class="stat-val yellow" id="statCats">0</div><div class="stat-lbl">Categorias</div></div>
-          <div class="stat"><div class="stat-val blue" id="statSources">0</div><div class="stat-lbl">Fontes</div></div>
-          <div class="stat"><div class="stat-val purple" id="statFavs">0</div><div class="stat-lbl">Favoritos</div></div>
-        </div>
-        <div class="view-toggle">
-          <button class="view-btn active" data-view="grid" title="Grade"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></button>
-          <button class="view-btn" data-view="list" title="Lista"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
-        </div>
-      </div>
-    </div>
-    <div class="player-wrap" id="playerWrap">
+    <!-- PLAYER -->
+    <div class="player-section" id="playerSection">
       <div class="player-header">
-        <div class="now-playing">
+        <div class="player-title">
           <div class="live-dot"></div>
           <div>
-            <div class="now-playing-text">Reproduzindo agora</div>
-            <div class="now-playing-name" id="nowPlayingName">—</div>
+            <div class="player-title-text">Reproduzindo agora</div>
+            <div class="player-channel-name" id="playerChannelName">—</div>
           </div>
         </div>
         <div class="player-actions">
-          <button class="icon-btn" id="copyUrlBtn" title="Copiar URL"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
-          <button class="icon-btn danger" id="closePlayer" title="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          <button class="icon-btn" id="copyPlayerUrlBtn" title="Copiar URL">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+          <button class="icon-btn danger" id="closePlayerBtn" title="Fechar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
       </div>
-      <div class="video-box">
-        <video id="video" controls autoplay playsinline></video>
+      <div class="video-container">
+        <video id="videoPlayer" controls autoplay playsinline></video>
         <div class="video-placeholder" id="videoPlaceholder" style="display:none;">
-          <div>
+          <div style="display:flex; flex-direction:column; align-items:center;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><polygon points="22 8 16 12 22 16 22 8"/></svg>
-            <p id="placeholderMsg">Conectando ao stream...</p>
+            <p id="placeholderMsg">Carregando stream...</p>
             <p class="warn" id="placeholderWarn"></p>
-            <div class="proxy-status" id="proxyStatus"></div>
-            <button class="copy-url-btn" id="copyUrlBtn2">📋 Copiar URL para player externo</button>
+            <div id="errBox"></div>
+            <div class="player-btns" id="playerBtns"></div>
           </div>
         </div>
       </div>
     </div>
-    <div class="grid" id="grid"></div>
-  </main>
-</div>
 
-<div class="modal-backdrop" id="settingsModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>⚙ Configurações & Sincronização</h2>
-      <button class="icon-btn" onclick="closeModal('settingsModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group"><label>Chave da API (JSONBin)</label><input type="text" id="cfgApiKey" placeholder="$2a$10$..."></div>
-      <div class="form-group"><label>ID do Bin</label><input type="text" id="cfgBinId" placeholder="6a186d9421f9ee59d295fa5e"></div>
-      <div class="form-group"><label>Lista M3U Customizada (URL ou conteúdo)</label><textarea id="cfgCustomM3U" placeholder="Cole aqui uma URL M3U ou o conteúdo M3U..."></textarea></div>
-      <div style="margin-top: 20px;">
-        <div class="toggle-row"><div class="toggle-label">Usar Proxy CORS<small>Contorna bloqueios de CORS no navegador</small></div><div class="toggle on" id="toggleProxy"></div></div>
-        <div class="toggle-row"><div class="toggle-label">Auto-play<small>Iniciar reprodução automaticamente</small></div><div class="toggle" id="toggleAutoPlay"></div></div>
-        <div class="toggle-row"><div class="toggle-label">Auto-sync ao iniciar<small>Carregar listas da nuvem automaticamente</small></div><div class="toggle on" id="toggleAutoSync"></div></div>
+    <div class="header">
+      <div>
+        <h1 id="viewTitle">Carregando...</h1>
+        <p id="viewSubtitle">Buscando lista IPTV...</p>
+      </div>
+      <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+        <div class="stats">
+          <div class="stat"><div class="stat-val green" id="statTotal">0</div><div class="stat-lbl">Canais</div></div>
+          <div class="stat"><div class="stat-val yellow" id="statCats">0</div><div class="stat-lbl">Categorias</div></div>
+          <div class="stat"><div class="stat-val blue" id="statGroups">0</div><div class="stat-lbl">Grupos</div></div>
+        </div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn danger" id="clearDataBtn">Limpar Dados</button>
-      <button class="btn" onclick="closeModal('settingsModal')">Cancelar</button>
-      <button class="btn primary" id="saveSettingsBtn">Salvar</button>
+    <div id="channelList">
+      <div class="loading">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        <p>Carregando lista IPTV...</p>
+      </div>
     </div>
-  </div>
+  </main>
 </div>
 
 <div class="toast" id="toast">
@@ -373,883 +365,57 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  CLOUD SYNC CONFIG
-// ═══════════════════════════════════════════════════════
-const DEFAULT_API_KEY = '$2a$10$ISDOMV9DYyZR2Z.NtmCMe.4y94QeMrK.L1ycOmt.GfmENetdlfyyC';
-const DEFAULT_BIN_ID = '6a186d9421f9ee59d295fa5e';
-const PROXIES = [
-  { name: 'AllOrigins', url: 'https://api.allorigins.win/raw?url=' },
-  { name: 'CorsProxy.io', url: 'https://corsproxy.io/?' },
-  { name: 'CodeTabs', url: 'https://api.codetabs.com/v1/proxy?quest=' }
-];
-
 let allChannels = [];
 let activeGroup = 'all';
-let activeSource = 'all';
-let activeShortcut = 'all';
+let activeCategory = 'all';
 let currentSearch = '';
-let currentView = 'grid';
 let currentChannel = null;
 let hls = null;
-let favorites = JSON.parse(localStorage.getItem('iptv_favorites') || '[]');
-let settings = JSON.parse(localStorage.getItem('iptv_settings') || JSON.stringify({
-  apiKey: DEFAULT_API_KEY, binId: DEFAULT_BIN_ID, customM3U: '',
-  proxy: true, autoPlay: false, autoSync: true
-}));
 
-// ═══════════════════════════════════════════════════════
-//  LISTA 1: 85 BRAZILIAN CHANNELS (completa)
-// ═══════════════════════════════════════════════════════
-const M3U_1 = `#EXTM3U
-#EXTINF:-1 tvg-name="BR: 1001 Noites" group-title="85 BRAZILIAN CHANNELS",BR: 1001 Noites
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182051
-#EXTINF:-1 tvg-name="BR: 24 Kitchen" group-title="85 BRAZILIAN CHANNELS",BR: 24 Kitchen
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182052
-#EXTINF:-1 tvg-name="BR: A vida moderna de Rocko" group-title="85 BRAZILIAN CHANNELS",BR: A vida moderna de Rocko
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182053
-#EXTINF:-1 tvg-name="BR: A&E" group-title="85 BRAZILIAN CHANNELS",BR: A&E
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182054
-#EXTINF:-1 tvg-name="BR: AgroBrasil TV" group-title="85 BRAZILIAN CHANNELS",BR: AgroBrasil TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182055
-#EXTINF:-1 tvg-name="BR: All Sports" group-title="85 BRAZILIAN CHANNELS",BR: All Sports
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182056
-#EXTINF:-1 tvg-name="BR: AMC" group-title="85 BRAZILIAN CHANNELS",BR: AMC
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182057
-#EXTINF:-1 tvg-name="BR: ANIMAL PLANET" group-title="85 BRAZILIAN CHANNELS",BR: ANIMAL PLANET
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182058
-#EXTINF:-1 tvg-name="BR: Anime TV" group-title="85 BRAZILIAN CHANNELS",BR: Anime TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182059
-#EXTINF:-1 tvg-name="BR: ARTE 1" group-title="85 BRAZILIAN CHANNELS",BR: ARTE 1
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182060
-#EXTINF:-1 tvg-name="BR: As Aventuras de Jackie Chan" group-title="85 BRAZILIAN CHANNELS",BR: As Aventuras de Jackie Chan
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182061
-#EXTINF:-1 tvg-name="BR: As Pistas de Blue" group-title="85 BRAZILIAN CHANNELS",BR: As Pistas de Blue
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182062
-#EXTINF:-1 tvg-name="BR: AXN" group-title="85 BRAZILIAN CHANNELS",BR: AXN
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182063
-#EXTINF:-1 tvg-name="BR: Baby TV" group-title="85 BRAZILIAN CHANNELS",BR: Baby TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182064
-#EXTINF:-1 tvg-name="BR: Band Campinas" group-title="85 BRAZILIAN CHANNELS",BR: Band Campinas
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182065
-#EXTINF:-1 tvg-name="BR: Band News" group-title="85 BRAZILIAN CHANNELS",BR: Band News
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182066
-#EXTINF:-1 tvg-name="BR: Band Sports" group-title="85 BRAZILIAN CHANNELS",BR: Band Sports
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182067
-#EXTINF:-1 tvg-name="BR: Band Vale" group-title="85 BRAZILIAN CHANNELS",BR: Band Vale
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182068
-#EXTINF:-1 tvg-name="BR: Bandkids 1" group-title="85 BRAZILIAN CHANNELS",BR: Bandkids 1
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182069
-#EXTINF:-1 tvg-name="BR: Bandkids 2" group-title="85 BRAZILIAN CHANNELS",BR: Bandkids 2
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182070
-#EXTINF:-1 tvg-name="BR: BDMG" group-title="85 BRAZILIAN CHANNELS",BR: BDMG
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182071
-#EXTINF:-1 tvg-name="BR: BET Being Mary Jane" group-title="85 BRAZILIAN CHANNELS",BR: BET Being Mary Jane
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182072
-#EXTINF:-1 tvg-name="BR: BET Pluto TV" group-title="85 BRAZILIAN CHANNELS",BR: BET Pluto TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182073
-#EXTINF:-1 tvg-name="BR: BIS" group-title="85 BRAZILIAN CHANNELS",BR: BIS
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182074
-#EXTINF:-1 tvg-name="BR: Brazi TV/TV Cultura" group-title="85 BRAZILIAN CHANNELS",BR: Brazi TV/TV Cultura
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182075
-#EXTINF:-1 tvg-name="BR: Camara Dos Deputados" group-title="85 BRAZILIAN CHANNELS",BR: Camara Dos Deputados
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182076
-#EXTINF:-1 tvg-name="BR: Canal Brasil" group-title="85 BRAZILIAN CHANNELS",BR: Canal Brasil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182077
-#EXTINF:-1 tvg-name="BR: Canal Off" group-title="85 BRAZILIAN CHANNELS",BR: Canal Off
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182078
-#EXTINF:-1 tvg-name="BR: Canal Saude" group-title="85 BRAZILIAN CHANNELS",BR: Canal Saude
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182079
-#EXTINF:-1 tvg-name="BR: Canal Viva" group-title="85 BRAZILIAN CHANNELS",BR: Canal Viva
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182080
-#EXTINF:-1 tvg-name="BR: Cancao Nova" group-title="85 BRAZILIAN CHANNELS",BR: Cancao Nova
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182081
-#EXTINF:-1 tvg-name="BR: Cartoon Network" group-title="85 BRAZILIAN CHANNELS",BR: Cartoon Network
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182082
-#EXTINF:-1 tvg-name="BR: Cartoonito" group-title="85 BRAZILIAN CHANNELS",BR: Cartoonito
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182083
-#EXTINF:-1 tvg-name="BR: Catve" group-title="85 BRAZILIAN CHANNELS",BR: Catve
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182084
-#EXTINF:-1 tvg-name="BR: Central TV Brazil" group-title="85 BRAZILIAN CHANNELS",BR: Central TV Brazil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182085
-#EXTINF:-1 tvg-name="BR: Cinemax" group-title="85 BRAZILIAN CHANNELS",BR: Cinemax
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182086
-#EXTINF:-1 tvg-name="BR: CNN Brasil" group-title="85 BRAZILIAN CHANNELS",BR: CNN Brasil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182087
-#EXTINF:-1 tvg-name="BR: COM Brasil" group-title="85 BRAZILIAN CHANNELS",BR: COM Brasil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182088
-#EXTINF:-1 tvg-name="BR: Combate" group-title="85 BRAZILIAN CHANNELS",BR: Combate
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182089
-#EXTINF:-1 tvg-name="BR: Comedy Central" group-title="85 BRAZILIAN CHANNELS",BR: Comedy Central
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182090
-#EXTINF:-1 tvg-name="BR: Comedy Central South Park" group-title="85 BRAZILIAN CHANNELS",BR: Comedy Central South Park
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182091
-#EXTINF:-1 tvg-name="BR: Conmebol 1" group-title="85 BRAZILIAN CHANNELS",BR: Conmebol 1
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182092
-#EXTINF:-1 tvg-name="BR: Conmebol 2" group-title="85 BRAZILIAN CHANNELS",BR: Conmebol 2
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182093
-#EXTINF:-1 tvg-name="BR: Conmebol 3" group-title="85 BRAZILIAN CHANNELS",BR: Conmebol 3
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182094
-#EXTINF:-1 tvg-name="BR: Conmebol 4" group-title="85 BRAZILIAN CHANNELS",BR: Conmebol 4
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182095
-#EXTINF:-1 tvg-name="BR: Cultura" group-title="85 BRAZILIAN CHANNELS",BR: Cultura
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182096
-#EXTINF:-1 tvg-name="BR: Curta" group-title="85 BRAZILIAN CHANNELS",BR: Curta
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182097
-#EXTINF:-1 tvg-name="BR: Discovery Channel" group-title="85 BRAZILIAN CHANNELS",BR: Discovery Channel
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182098
-#EXTINF:-1 tvg-name="BR: Discovery H&H Brasil" group-title="85 BRAZILIAN CHANNELS",BR: Discovery H&H Brasil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182099
-#EXTINF:-1 tvg-name="BR: Discovery Kids" group-title="85 BRAZILIAN CHANNELS",BR: Discovery Kids
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182100
-#EXTINF:-1 tvg-name="BR: Discovery Science" group-title="85 BRAZILIAN CHANNELS",BR: Discovery Science
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182101
-#EXTINF:-1 tvg-name="BR: Discovery Theater" group-title="85 BRAZILIAN CHANNELS",BR: Discovery Theater
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182102
-#EXTINF:-1 tvg-name="BR: Discovery Turbo" group-title="85 BRAZILIAN CHANNELS",BR: Discovery Turbo
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182103
-#EXTINF:-1 tvg-name="BR: Discovery World" group-title="85 BRAZILIAN CHANNELS",BR: Discovery World
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182104
-#EXTINF:-1 tvg-name="BR: Disney Junior" group-title="85 BRAZILIAN CHANNELS",BR: Disney Junior
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182105
-#EXTINF:-1 tvg-name="BR: Disney XD" group-title="85 BRAZILIAN CHANNELS",BR: Disney XD
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182106
-#EXTINF:-1 tvg-name="BR: E!" group-title="85 BRAZILIAN CHANNELS",BR: E!
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182107
-#EXTINF:-1 tvg-name="BR: EPTV" group-title="85 BRAZILIAN CHANNELS",BR: EPTV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182108
-#EXTINF:-1 tvg-name="BR: ESPN" group-title="85 BRAZILIAN CHANNELS",BR: ESPN
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182109
-#EXTINF:-1 tvg-name="BR: ESPN 2" group-title="85 BRAZILIAN CHANNELS",BR: ESPN 2
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182110
-#EXTINF:-1 tvg-name="BR: ESPN 3" group-title="85 BRAZILIAN CHANNELS",BR: ESPN 3
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182111
-#EXTINF:-1 tvg-name="BR: ESPN 4" group-title="85 BRAZILIAN CHANNELS",BR: ESPN 4
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182112
-#EXTINF:-1 tvg-name="BR: ESPN Extra" group-title="85 BRAZILIAN CHANNELS",BR: ESPN Extra
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182113
-#EXTINF:-1 tvg-name="BR: ESPN Vivo" group-title="85 BRAZILIAN CHANNELS",BR: ESPN Vivo
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182114
-#EXTINF:-1 tvg-name="BR: FailArmy" group-title="85 BRAZILIAN CHANNELS",BR: FailArmy
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182115
-#EXTINF:-1 tvg-name="BR: Filmes Suspense" group-title="85 BRAZILIAN CHANNELS",BR: Filmes Suspense
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182116
-#EXTINF:-1 tvg-name="BR: Fish TV" group-title="85 BRAZILIAN CHANNELS",BR: Fish TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182117
-#EXTINF:-1 tvg-name="BR: Fonte TV" group-title="85 BRAZILIAN CHANNELS",BR: Fonte TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182118
-#EXTINF:-1 tvg-name="BR: Food Network" group-title="85 BRAZILIAN CHANNELS",BR: Food Network
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182119
-#EXTINF:-1 tvg-name="BR: Fox Crime" group-title="85 BRAZILIAN CHANNELS",BR: Fox Crime
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182120
-#EXTINF:-1 tvg-name="BR: Fox Life" group-title="85 BRAZILIAN CHANNELS",BR: Fox Life
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182121
-#EXTINF:-1 tvg-name="BR: FOX SPORTS 2" group-title="85 BRAZILIAN CHANNELS",BR: FOX SPORTS 2
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182122
-#EXTINF:-1 tvg-name="BR: Futura" group-title="85 BRAZILIAN CHANNELS",BR: Futura
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182123
-#EXTINF:-1 tvg-name="BR: FX" group-title="85 BRAZILIAN CHANNELS",BR: FX
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182124
-#EXTINF:-1 tvg-name="BR: Globo Amazonas" group-title="85 BRAZILIAN CHANNELS",BR: Globo Amazonas
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182125
-#EXTINF:-1 tvg-name="BR: Globo Asa Branca" group-title="85 BRAZILIAN CHANNELS",BR: Globo Asa Branca
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182126
-#EXTINF:-1 tvg-name="BR: Globo Bahia" group-title="85 BRAZILIAN CHANNELS",BR: Globo Bahia
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182127
-#EXTINF:-1 tvg-name="BR: Globo Brasilia" group-title="85 BRAZILIAN CHANNELS",BR: Globo Brasilia
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182128
-#EXTINF:-1 tvg-name="BR: Globo Cuiaba" group-title="85 BRAZILIAN CHANNELS",BR: Globo Cuiaba
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182129
-#EXTINF:-1 tvg-name="BR: GLOBO EPTV Campinas" group-title="85 BRAZILIAN CHANNELS",BR: GLOBO EPTV Campinas
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182130
-#EXTINF:-1 tvg-name="BR: Globo EPTV Ribeirao Preto" group-title="85 BRAZILIAN CHANNELS",BR: Globo EPTV Ribeirao Preto
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182131
-#EXTINF:-1 tvg-name="BR: Globo EPTV Sao Carlos" group-title="85 BRAZILIAN CHANNELS",BR: Globo EPTV Sao Carlos
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182132
-#EXTINF:-1 tvg-name="BR: Globo Fortaleza" group-title="85 BRAZILIAN CHANNELS",BR: Globo Fortaleza
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182133
-#EXTINF:-1 tvg-name="BR: Globo Inter TV Cabugi" group-title="85 BRAZILIAN CHANNELS",BR: Globo Inter TV Cabugi
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182134
-#EXTINF:-1 tvg-name="BR: Globo Internacional" group-title="85 BRAZILIAN CHANNELS",BR: Globo Internacional
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182135
-#EXTINF:-1 tvg-name="BR: Globo Minas" group-title="85 BRAZILIAN CHANNELS",BR: Globo Minas
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182136
-#EXTINF:-1 tvg-name="BR: Globo News" group-title="85 BRAZILIAN CHANNELS",BR: Globo News
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182137
-#EXTINF:-1 tvg-name="BR: Globo Nordeste" group-title="85 BRAZILIAN CHANNELS",BR: Globo Nordeste
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182138
-#EXTINF:-1 tvg-name="BR: Globo Now" group-title="85 BRAZILIAN CHANNELS",BR: Globo Now
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182139
-#EXTINF:-1 tvg-name="BR: Globo NSC TV" group-title="85 BRAZILIAN CHANNELS",BR: Globo NSC TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182140
-#EXTINF:-1 tvg-name="BR: Globo Premium" group-title="85 BRAZILIAN CHANNELS",BR: Globo Premium
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182141
-#EXTINF:-1 tvg-name="BR: Globo RBS Porto Alegre" group-title="85 BRAZILIAN CHANNELS",BR: Globo RBS Porto Alegre
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182142
-#EXTINF:-1 tvg-name="BR: Globo Ribeir" group-title="85 BRAZILIAN CHANNELS",BR: Globo Ribeir
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182143
-#EXTINF:-1 tvg-name="BR: Globo Rio de Janeiro" group-title="85 BRAZILIAN CHANNELS",BR: Globo Rio de Janeiro
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182144
-#EXTINF:-1 tvg-name="BR: Globo Rio Grande Do Norte" group-title="85 BRAZILIAN CHANNELS",BR: Globo Rio Grande Do Norte
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182145
-#EXTINF:-1 tvg-name="BR: Globo RJ" group-title="85 BRAZILIAN CHANNELS",BR: Globo RJ
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182146
-#EXTINF:-1 tvg-name="BR: Globo RPC Curitiba" group-title="85 BRAZILIAN CHANNELS",BR: Globo RPC Curitiba
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182147
-#EXTINF:-1 tvg-name="BR: Globo Sao Paulo" group-title="85 BRAZILIAN CHANNELS",BR: Globo Sao Paulo
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182148
-#EXTINF:-1 tvg-name="BR: Globo Tribuna Santos" group-title="85 BRAZILIAN CHANNELS",BR: Globo Tribuna Santos
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182149
-#EXTINF:-1 tvg-name="BR: Globo TV" group-title="85 BRAZILIAN CHANNELS",BR: Globo TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182150
-#EXTINF:-1 tvg-name="BR: Gloob" group-title="85 BRAZILIAN CHANNELS",BR: Gloob
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182151
-#EXTINF:-1 tvg-name="BR: Gloobinho" group-title="85 BRAZILIAN CHANNELS",BR: Gloobinho
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182152
-#EXTINF:-1 tvg-name="BR: GNT" group-title="85 BRAZILIAN CHANNELS",BR: GNT
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182153
-#EXTINF:-1 tvg-name="BR: Golden" group-title="85 BRAZILIAN CHANNELS",BR: Golden
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182154
-#EXTINF:-1 tvg-name="BR: Gospel Movie TV" group-title="85 BRAZILIAN CHANNELS",BR: Gospel Movie TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182155
-#EXTINF:-1 tvg-name="BR: Guia de Canais" group-title="85 BRAZILIAN CHANNELS",BR: Guia de Canais
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182156
-#EXTINF:-1 tvg-name="BR: HBO" group-title="85 BRAZILIAN CHANNELS",BR: HBO
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182157
-#EXTINF:-1 tvg-name="BR: HBO 2" group-title="85 BRAZILIAN CHANNELS",BR: HBO 2
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182158
-#EXTINF:-1 tvg-name="BR: HBO Family" group-title="85 BRAZILIAN CHANNELS",BR: HBO Family
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182159
-#EXTINF:-1 tvg-name="BR: HBO Mundi" group-title="85 BRAZILIAN CHANNELS",BR: HBO Mundi
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182160
-#EXTINF:-1 tvg-name="BR: HBO Pop" group-title="85 BRAZILIAN CHANNELS",BR: HBO Pop
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182161
-#EXTINF:-1 tvg-name="BR: HBO Signature" group-title="85 BRAZILIAN CHANNELS",BR: HBO Signature
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182162
-#EXTINF:-1 tvg-name="BR: HBO Xtreme" group-title="85 BRAZILIAN CHANNELS",BR: HBO Xtreme
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182163
-#EXTINF:-1 tvg-name="BR: HBO+" group-title="85 BRAZILIAN CHANNELS",BR: HBO+
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182164
-#EXTINF:-1 tvg-name="BR: HGTV" group-title="85 BRAZILIAN CHANNELS",BR: HGTV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182165
-#EXTINF:-1 tvg-name="BR: History" group-title="85 BRAZILIAN CHANNELS",BR: History
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182166
-#EXTINF:-1 tvg-name="BR: History 2" group-title="85 BRAZILIAN CHANNELS",BR: History 2
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182167
-#EXTINF:-1 tvg-name="BR: Hope Channel" group-title="85 BRAZILIAN CHANNELS",BR: Hope Channel
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182168
-#EXTINF:-1 tvg-name="BR: Inter TV Grande Minas" group-title="85 BRAZILIAN CHANNELS",BR: Inter TV Grande Minas
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182169
-#EXTINF:-1 tvg-name="BR: Investigation Discovery" group-title="85 BRAZILIAN CHANNELS",BR: Investigation Discovery
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182170
-#EXTINF:-1 tvg-name="BR: Jeannie e um Genio" group-title="85 BRAZILIAN CHANNELS",BR: Jeannie e um Genio
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182171
-#EXTINF:-1 tvg-name="BR: Jovem Pan News" group-title="85 BRAZILIAN CHANNELS",BR: Jovem Pan News
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182172
-#EXTINF:-1 tvg-name="BR: Jovem Pan Pluto TV" group-title="85 BRAZILIAN CHANNELS",BR: Jovem Pan Pluto TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182173
-#EXTINF:-1 tvg-name="BR: Kpop" group-title="85 BRAZILIAN CHANNELS",BR: Kpop
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182174
-#EXTINF:-1 tvg-name="BR: Lifetime" group-title="85 BRAZILIAN CHANNELS",BR: Lifetime
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182175
-#EXTINF:-1 tvg-name="BR: Like" group-title="85 BRAZILIAN CHANNELS",BR: Like
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182176
-#EXTINF:-1 tvg-name="BR: Mana" group-title="85 BRAZILIAN CHANNELS",BR: Mana
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182177
-#EXTINF:-1 tvg-name="BR: MasterChef" group-title="85 BRAZILIAN CHANNELS",BR: MasterChef
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182178
-#EXTINF:-1 tvg-name="BR: Megapix" group-title="85 BRAZILIAN CHANNELS",BR: Megapix
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182179
-#EXTINF:-1 tvg-name="BR: MTV Brasil" group-title="85 BRAZILIAN CHANNELS",BR: MTV Brasil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182180
-#EXTINF:-1 tvg-name="BR: Multishow" group-title="85 BRAZILIAN CHANNELS",BR: Multishow
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182181
-#EXTINF:-1 tvg-name="BR: Music Box Brazil" group-title="85 BRAZILIAN CHANNELS",BR: Music Box Brazil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182182
-#EXTINF:-1 tvg-name="BR: MyTime movie network Brazil" group-title="85 BRAZILIAN CHANNELS",BR: MyTime movie network Brazil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182183
-#EXTINF:-1 tvg-name="BR: Naruto" group-title="85 BRAZILIAN CHANNELS",BR: Naruto
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182184
-#EXTINF:-1 tvg-name="BR: NAT GEO" group-title="85 BRAZILIAN CHANNELS",BR: NAT GEO
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182185
-#EXTINF:-1 tvg-name="BR: NAT GEO Wild" group-title="85 BRAZILIAN CHANNELS",BR: NAT GEO Wild
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182186
-#EXTINF:-1 tvg-name="BR: Nick Classico" group-title="85 BRAZILIAN CHANNELS",BR: Nick Classico
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182187
-#EXTINF:-1 tvg-name="BR: Nick Junior" group-title="85 BRAZILIAN CHANNELS",BR: Nick Junior
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182188
-#EXTINF:-1 tvg-name="BR: Nick Junior Club" group-title="85 BRAZILIAN CHANNELS",BR: Nick Junior Club
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182189
-#EXTINF:-1 tvg-name="BR: nickelodeon" group-title="85 BRAZILIAN CHANNELS",BR: nickelodeon
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182190
-#EXTINF:-1 tvg-name="BR: Nova Era TV" group-title="85 BRAZILIAN CHANNELS",BR: Nova Era TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182191
-#EXTINF:-1 tvg-name="BR: Novo Tempo" group-title="85 BRAZILIAN CHANNELS",BR: Novo Tempo
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182192
-#EXTINF:-1 tvg-name="BR: O Encantador de Caes" group-title="85 BRAZILIAN CHANNELS",BR: O Encantador de Caes
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182193
-#EXTINF:-1 tvg-name="BR: O Reino Infantil" group-title="85 BRAZILIAN CHANNELS",BR: O Reino Infantil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182194
-#EXTINF:-1 tvg-name="BR: Paramount Network" group-title="85 BRAZILIAN CHANNELS",BR: Paramount Network
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182195
-#EXTINF:-1 tvg-name="BR: Premiere FC 1" group-title="85 BRAZILIAN CHANNELS",BR: Premiere FC 1
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182196
-#EXTINF:-1 tvg-name="BR: Premiere FC 2" group-title="85 BRAZILIAN CHANNELS",BR: Premiere FC 2
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182197
-#EXTINF:-1 tvg-name="BR: Premiere FC 3" group-title="85 BRAZILIAN CHANNELS",BR: Premiere FC 3
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182198
-#EXTINF:-1 tvg-name="BR: Premiere FC 4" group-title="85 BRAZILIAN CHANNELS",BR: Premiere FC 4
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182199
-#EXTINF:-1 tvg-name="BR: Premiere FC 5" group-title="85 BRAZILIAN CHANNELS",BR: Premiere FC 5
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182200
-#EXTINF:-1 tvg-name="BR: Premiere FC 6" group-title="85 BRAZILIAN CHANNELS",BR: Premiere FC 6
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182201
-#EXTINF:-1 tvg-name="BR: Premiere FC 7" group-title="85 BRAZILIAN CHANNELS",BR: Premiere FC 7
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182202
-#EXTINF:-1 tvg-name="BR: Prime Box Brazil" group-title="85 BRAZILIAN CHANNELS",BR: Prime Box Brazil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182203
-#EXTINF:-1 tvg-name="BR: RBA TV" group-title="85 BRAZILIAN CHANNELS",BR: RBA TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182204
-#EXTINF:-1 tvg-name="BR: Record Campinas" group-title="85 BRAZILIAN CHANNELS",BR: Record Campinas
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182205
-#EXTINF:-1 tvg-name="BR: Record News" group-title="85 BRAZILIAN CHANNELS",BR: Record News
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182206
-#EXTINF:-1 tvg-name="BR: Record Nordeste" group-title="85 BRAZILIAN CHANNELS",BR: Record Nordeste
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182207
-#EXTINF:-1 tvg-name="BR: Record Rio" group-title="85 BRAZILIAN CHANNELS",BR: Record Rio
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182208
-#EXTINF:-1 tvg-name="BR: Record SP" group-title="85 BRAZILIAN CHANNELS",BR: Record SP
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182209
-#EXTINF:-1 tvg-name="BR: Record TV" group-title="85 BRAZILIAN CHANNELS",BR: Record TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182210
-#EXTINF:-1 tvg-name="BR: Record TV Americas" group-title="85 BRAZILIAN CHANNELS",BR: Record TV Americas
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182211
-#EXTINF:-1 tvg-name="BR: Record TV Europa" group-title="85 BRAZILIAN CHANNELS",BR: Record TV Europa
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182212
-#EXTINF:-1 tvg-name="BR: Rede Brasil" group-title="85 BRAZILIAN CHANNELS",BR: Rede Brasil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182213
-#EXTINF:-1 tvg-name="BR: Rede Brasil de Comunicacao" group-title="85 BRAZILIAN CHANNELS",BR: Rede Brasil de Comunicacao
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182214
-#EXTINF:-1 tvg-name="BR: Rede Gospel" group-title="85 BRAZILIAN CHANNELS",BR: Rede Gospel
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182215
-#EXTINF:-1 tvg-name="BR: Rede Mao Amiga" group-title="85 BRAZILIAN CHANNELS",BR: Rede Mao Amiga
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182216
-#EXTINF:-1 tvg-name="BR: Rede Minas" group-title="85 BRAZILIAN CHANNELS",BR: Rede Minas
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182217
-#EXTINF:-1 tvg-name="BR: Rede Super" group-title="85 BRAZILIAN CHANNELS",BR: Rede Super
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182218
-#EXTINF:-1 tvg-name="BR: Rede TV" group-title="85 BRAZILIAN CHANNELS",BR: Rede TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182219
-#EXTINF:-1 tvg-name="BR: Rede TV SP" group-title="85 BRAZILIAN CHANNELS",BR: Rede TV SP
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182220
-#EXTINF:-1 tvg-name="BR: Rede TV Tocantins" group-title="85 BRAZILIAN CHANNELS",BR: Rede TV Tocantins
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182221
-#EXTINF:-1 tvg-name="BR: Retro Cartoon" group-title="85 BRAZILIAN CHANNELS",BR: Retro Cartoon
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182222
-#EXTINF:-1 tvg-name="BR: Santa Cecilia TV" group-title="85 BRAZILIAN CHANNELS",BR: Santa Cecilia TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182223
-#EXTINF:-1 tvg-name="BR: SBT" group-title="85 BRAZILIAN CHANNELS",BR: SBT
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182224
-#EXTINF:-1 tvg-name="BR: SBT SP" group-title="85 BRAZILIAN CHANNELS",BR: SBT SP
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182225
-#EXTINF:-1 tvg-name="BR: Sony Channel" group-title="85 BRAZILIAN CHANNELS",BR: Sony Channel
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182226
-#EXTINF:-1 tvg-name="BR: Space" group-title="85 BRAZILIAN CHANNELS",BR: Space
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182227
-#EXTINF:-1 tvg-name="BR: SPORTV" group-title="85 BRAZILIAN CHANNELS",BR: SPORTV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182228
-#EXTINF:-1 tvg-name="BR: SPORTV 2" group-title="85 BRAZILIAN CHANNELS",BR: SPORTV 2
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182229
-#EXTINF:-1 tvg-name="BR: SPORTV 3" group-title="85 BRAZILIAN CHANNELS",BR: SPORTV 3
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182230
-#EXTINF:-1 tvg-name="BR: Star Channel" group-title="85 BRAZILIAN CHANNELS",BR: Star Channel
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182231
-#EXTINF:-1 tvg-name="BR: Studio Universal" group-title="85 BRAZILIAN CHANNELS",BR: Studio Universal
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182232
-#EXTINF:-1 tvg-name="BR: SYFY" group-title="85 BRAZILIAN CHANNELS",BR: SYFY
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182233
-#EXTINF:-1 tvg-name="BR: Tastemade" group-title="85 BRAZILIAN CHANNELS",BR: Tastemade
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182234
-#EXTINF:-1 tvg-name="BR: TCM" group-title="85 BRAZILIAN CHANNELS",BR: TCM
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182235
-#EXTINF:-1 tvg-name="BR: TeenNick" group-title="85 BRAZILIAN CHANNELS",BR: TeenNick
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182236
-#EXTINF:-1 tvg-name="BR: Telecine Action" group-title="85 BRAZILIAN CHANNELS",BR: Telecine Action
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182237
-#EXTINF:-1 tvg-name="BR: Telecine Cult" group-title="85 BRAZILIAN CHANNELS",BR: Telecine Cult
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182238
-#EXTINF:-1 tvg-name="BR: Telecine Fun" group-title="85 BRAZILIAN CHANNELS",BR: Telecine Fun
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182239
-#EXTINF:-1 tvg-name="BR: Telecine Pipoca" group-title="85 BRAZILIAN CHANNELS",BR: Telecine Pipoca
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182240
-#EXTINF:-1 tvg-name="BR: Telecine Premium" group-title="85 BRAZILIAN CHANNELS",BR: Telecine Premium
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182241
-#EXTINF:-1 tvg-name="BR: Telecine Touch" group-title="85 BRAZILIAN CHANNELS",BR: Telecine Touch
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182242
-#EXTINF:-1 tvg-name="BR: Terra Viva" group-title="85 BRAZILIAN CHANNELS",BR: Terra Viva
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182243
-#EXTINF:-1 tvg-name="BR: The Pet Collective" group-title="85 BRAZILIAN CHANNELS",BR: The Pet Collective
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182244
-#EXTINF:-1 tvg-name="BR: TLC" group-title="85 BRAZILIAN CHANNELS",BR: TLC
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182245
-#EXTINF:-1 tvg-name="BR: TNT" group-title="85 BRAZILIAN CHANNELS",BR: TNT
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182246
-#EXTINF:-1 tvg-name="BR: TNT Series" group-title="85 BRAZILIAN CHANNELS",BR: TNT Series
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182247
-#EXTINF:-1 tvg-name="BR: TNT Sports 2" group-title="85 BRAZILIAN CHANNELS",BR: TNT Sports 2
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182248
-#EXTINF:-1 tvg-name="BR: TNT Sports 3" group-title="85 BRAZILIAN CHANNELS",BR: TNT Sports 3
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182249
-#EXTINF:-1 tvg-name="BR: TNT Sports 4" group-title="85 BRAZILIAN CHANNELS",BR: TNT Sports 4
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182250
-#EXTINF:-1 tvg-name="BR: TNT Sports 5" group-title="85 BRAZILIAN CHANNELS",BR: TNT Sports 5
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182251
-#EXTINF:-1 tvg-name="BR: TNT Sports 5 Brasil" group-title="85 BRAZILIAN CHANNELS",BR: TNT Sports 5 Brasil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182252
-#EXTINF:-1 tvg-name="BR: Tokusato" group-title="85 BRAZILIAN CHANNELS",BR: Tokusato
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182253
-#EXTINF:-1 tvg-name="BR: Tooncast" group-title="85 BRAZILIAN CHANNELS",BR: Tooncast
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182254
-#EXTINF:-1 tvg-name="BR: Travel Box Brasil" group-title="85 BRAZILIAN CHANNELS",BR: Travel Box Brasil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182255
-#EXTINF:-1 tvg-name="BR: tru TV" group-title="85 BRAZILIAN CHANNELS",BR: tru TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182256
-#EXTINF:-1 tvg-name="BR: Turma da Monica" group-title="85 BRAZILIAN CHANNELS",BR: Turma da Monica
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182257
-#EXTINF:-1 tvg-name="BR: TV Aberta" group-title="85 BRAZILIAN CHANNELS",BR: TV Aberta
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182258
-#EXTINF:-1 tvg-name="BR: TV Aparecida" group-title="85 BRAZILIAN CHANNELS",BR: TV Aparecida
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182259
-#EXTINF:-1 tvg-name="BR: TV Assembl" group-title="85 BRAZILIAN CHANNELS",BR: TV Assembl
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182260
-#EXTINF:-1 tvg-name="BR: TV Birigui" group-title="85 BRAZILIAN CHANNELS",BR: TV Birigui
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182261
-#EXTINF:-1 tvg-name="BR: TV BNO" group-title="85 BRAZILIAN CHANNELS",BR: TV BNO
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182262
-#EXTINF:-1 tvg-name="BR: TV Brasil" group-title="85 BRAZILIAN CHANNELS",BR: TV Brasil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182263
-#EXTINF:-1 tvg-name="BR: TV BRICS Portuguese" group-title="85 BRAZILIAN CHANNELS",BR: TV BRICS Portuguese
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182264
-#EXTINF:-1 tvg-name="BR: TV Cidade Canal 9" group-title="85 BRAZILIAN CHANNELS",BR: TV Cidade Canal 9
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182265
-#EXTINF:-1 tvg-name="BR: TV Cinec" group-title="85 BRAZILIAN CHANNELS",BR: TV Cinec
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182266
-#EXTINF:-1 tvg-name="BR: TV Destak" group-title="85 BRAZILIAN CHANNELS",BR: TV Destak
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182267
-#EXTINF:-1 tvg-name="BR: TV Diario" group-title="85 BRAZILIAN CHANNELS",BR: TV Diario
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182268
-#EXTINF:-1 tvg-name="BR: TV Escola" group-title="85 BRAZILIAN CHANNELS",BR: TV Escola
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182269
-#EXTINF:-1 tvg-name="BR: TV Evangelizar" group-title="85 BRAZILIAN CHANNELS",BR: TV Evangelizar
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182270
-#EXTINF:-1 tvg-name="BR: TV Gazeta" group-title="85 BRAZILIAN CHANNELS",BR: TV Gazeta
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182271
-#EXTINF:-1 tvg-name="BR: TV Gideoes" group-title="85 BRAZILIAN CHANNELS",BR: TV Gideoes
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182272
-#EXTINF:-1 tvg-name="BR: TV Globo Internacional Américas" group-title="85 BRAZILIAN CHANNELS",BR: TV Globo Internacional Américas
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182273
-#EXTINF:-1 tvg-name="BR: TV Justica" group-title="85 BRAZILIAN CHANNELS",BR: TV Justica
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182274
-#EXTINF:-1 tvg-name="BR: TV Mackenzie" group-title="85 BRAZILIAN CHANNELS",BR: TV Mackenzie
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182275
-#EXTINF:-1 tvg-name="BR: TV MAX" group-title="85 BRAZILIAN CHANNELS",BR: TV MAX
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182276
-#EXTINF:-1 tvg-name="BR: TV Metropole" group-title="85 BRAZILIAN CHANNELS",BR: TV Metropole
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182277
-#EXTINF:-1 tvg-name="BR: TV Mon" group-title="85 BRAZILIAN CHANNELS",BR: TV Mon
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182278
-#EXTINF:-1 tvg-name="BR: TV Pai Eterno" group-title="85 BRAZILIAN CHANNELS",BR: TV Pai Eterno
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182279
-#EXTINF:-1 tvg-name="BR: TV Pampa" group-title="85 BRAZILIAN CHANNELS",BR: TV Pampa
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182280
-#EXTINF:-1 tvg-name="BR: TV Pantanal MS" group-title="85 BRAZILIAN CHANNELS",BR: TV Pantanal MS
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182281
-#EXTINF:-1 tvg-name="BR: TV Parana Turismo" group-title="85 BRAZILIAN CHANNELS",BR: TV Parana Turismo
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182282
-#EXTINF:-1 tvg-name="BR: TV Pocos" group-title="85 BRAZILIAN CHANNELS",BR: TV Pocos
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182283
-#EXTINF:-1 tvg-name="BR: TV Ra Tim Bum" group-title="85 BRAZILIAN CHANNELS",BR: TV Ra Tim Bum
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182284
-#EXTINF:-1 tvg-name="BR: TV Santa Cruz" group-title="85 BRAZILIAN CHANNELS",BR: TV Santa Cruz
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182285
-#EXTINF:-1 tvg-name="BR: TV Santa Maria" group-title="85 BRAZILIAN CHANNELS",BR: TV Santa Maria
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182286
-#EXTINF:-1 tvg-name="BR: TV Senado" group-title="85 BRAZILIAN CHANNELS",BR: TV Senado
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182287
-#EXTINF:-1 tvg-name="BR: TV Tem Bauru" group-title="85 BRAZILIAN CHANNELS",BR: TV Tem Bauru
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182288
-#EXTINF:-1 tvg-name="BR: TV Terceiro Anjo" group-title="85 BRAZILIAN CHANNELS",BR: TV Terceiro Anjo
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182289
-#EXTINF:-1 tvg-name="BR: TVC" group-title="85 BRAZILIAN CHANNELS",BR: TVC
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182290
-#EXTINF:-1 tvg-name="BR: TVE Bahia" group-title="85 BRAZILIAN CHANNELS",BR: TVE Bahia
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182291
-#EXTINF:-1 tvg-name="BR: TVN Brasil" group-title="85 BRAZILIAN CHANNELS",BR: TVN Brasil
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182292
-#EXTINF:-1 tvg-name="BR: Universal TV" group-title="85 BRAZILIAN CHANNELS",BR: Universal TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182293
-#EXTINF:-1 tvg-name="BR: USA Network East" group-title="85 BRAZILIAN CHANNELS",BR: USA Network East
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182294
-#EXTINF:-1 tvg-name="BR: Warner TV" group-title="85 BRAZILIAN CHANNELS",BR: Warner TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182295
-#EXTINF:-1 tvg-name="BR: WooHoo" group-title="85 BRAZILIAN CHANNELS",BR: WooHoo
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182296
-#EXTINF:-1 tvg-name="BR: ZooMoo Kids" group-title="85 BRAZILIAN CHANNELS",BR: ZooMoo Kids
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/182297
-#EXTINF:-1 tvg-name="COL: CARACOL TV" group-title="85 BRAZILIAN CHANNELS",COL: CARACOL TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/201055
-#EXTINF:-1 tvg-name="COL: RCN TV" group-title="85 BRAZILIAN CHANNELS",COL: RCN TV
-http://62.182.83.108:80/Gattisla/wOpy2I0hWd/201056`;
+const DEFAULT_M3U_URL = 'https://raw.githubusercontent.com/helenfernanda/gratis/main/iptvlegal.m3u';
 
-// ═══════════════════════════════════════════════════════
-//  LISTA 2: BRAZIL VIP (completa)
-// ═══════════════════════════════════════════════════════
-const M3U_2 = `#EXTM3U
-#EXTINF:-1 tvg-name="BR: AMC" tvg-logo="https://docdog.top/logo/countries/brazil/amc.png" group-title="LAME | BRAZIL VIP",BR: AMC
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4830
-#EXTINF:-1 tvg-name="BR: ANIMAL PLANET" tvg-logo="https://docdog.top/logo/countries/brazil/animalplanet.png" group-title="LAME | BRAZIL VIP",BR: ANIMAL PLANET
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4831
-#EXTINF:-1 tvg-name="BR: AXN" tvg-logo="https://docdog.top/logo/countries/brazil/axn.png" group-title="LAME | BRAZIL VIP",BR: AXN
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4832
-#EXTINF:-1 tvg-name="BR: BABY" tvg-logo="https://docdog.top/logo/countries/brazil/babytv.png" group-title="LAME | BRAZIL VIP",BR: BABY
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4833
-#EXTINF:-1 tvg-name="BR: BAND NEWS" tvg-logo="https://docdog.top/logo/countries/brazil/bandnews.png" group-title="LAME | BRAZIL VIP",BR: BAND NEWS
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4834
-#EXTINF:-1 tvg-name="BR: BAND SPORT" tvg-logo="https://docdog.top/logo/countries/brazil/bandsports.png" group-title="LAME | BRAZIL VIP",BR: BAND SPORT
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4835
-#EXTINF:-1 tvg-name="BR: BOOMERANG" tvg-logo="https://docdog.top/logo/countries/brazil/boomerang.png" group-title="LAME | BRAZIL VIP",BR: BOOMERANG
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4836
-#EXTINF:-1 tvg-name="BR: CARTOON NETWORK" tvg-logo="https://docdog.top/logo/countries/brazil/cartoonnetwork.png" group-title="LAME | BRAZIL VIP",BR: CARTOON NETWORK
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4837
-#EXTINF:-1 tvg-name="BR: COMBATE" tvg-logo="https://docdog.top/logo/countries/brazil/combate.png" group-title="LAME | BRAZIL VIP",BR: COMBATE
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4838
-#EXTINF:-1 tvg-name="BR: COMEDY CENTRAL" tvg-logo="https://docdog.top/logo/countries/brazil/comedycentral.png" group-title="LAME | BRAZIL VIP",BR: COMEDY CENTRAL
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4839
-#EXTINF:-1 tvg-name="BR: CONMEBOL 2" group-title="LAME | BRAZIL VIP",BR: CONMEBOL 2
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4840
-#EXTINF:-1 tvg-name="BR: DISCOVERY CHANNEL" tvg-logo="https://docdog.top/logo/countries/brazil/discoverychannel.png" group-title="LAME | BRAZIL VIP",BR: DISCOVERY CHANNEL
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4841
-#EXTINF:-1 tvg-name="BR: HGTV" group-title="LAME | BRAZIL VIP",BR: HGTV
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4842
-#EXTINF:-1 tvg-name="BR: DISCOVERY HOME & HEALTH" tvg-logo="https://docdog.top/logo/countries/brazil/discoveryhomeandhealth.png" group-title="LAME | BRAZIL VIP",BR: DISCOVERY HOME & HEALTH
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4843
-#EXTINF:-1 tvg-name="BR: DISCOVERY ID" tvg-logo="https://docdog.top/logo/countries/brazil/discoveryidx.png" group-title="LAME | BRAZIL VIP",BR: DISCOVERY ID
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4844
-#EXTINF:-1 tvg-name="BR: DISCOVERY KIDS" tvg-logo="https://docdog.top/logo/countries/brazil/discoverykids.png" group-title="LAME | BRAZIL VIP",BR: DISCOVERY KIDS
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4845
-#EXTINF:-1 tvg-name="BR: DISCOVERY SCIENCE" tvg-logo="https://docdog.top/logo/countries/brazil/discoveryscience.png" group-title="LAME | BRAZIL VIP",BR: DISCOVERY SCIENCE
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4846
-#EXTINF:-1 tvg-name="BR: DISCOVERY THEATER" tvg-logo="https://docdog.top/logo/countries/brazil/discoverytheater.png" group-title="LAME | BRAZIL VIP",BR: DISCOVERY THEATER
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4847
-#EXTINF:-1 tvg-name="BR: DISCOVERY TLC" tvg-logo="https://docdog.top/logo/countries/brazil/discoverytlc.png" group-title="LAME | BRAZIL VIP",BR: DISCOVERY TLC
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4848
-#EXTINF:-1 tvg-name="BR: DISCOVERY TURBO" tvg-logo="https://docdog.top/logo/countries/brazil/discoveryturbo.png" group-title="LAME | BRAZIL VIP",BR: DISCOVERY TURBO
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4849
-#EXTINF:-1 tvg-name="BR: DISCOVERY WORLD" tvg-logo="https://docdog.top/logo/countries/brazil/discoveryworld.png" group-title="LAME | BRAZIL VIP",BR: DISCOVERY WORLD
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4850
-#EXTINF:-1 tvg-name="BR: DISNEY CHANNEL" tvg-logo="https://docdog.top/logo/countries/brazil/disneychannel.png" group-title="LAME | BRAZIL VIP",BR: DISNEY CHANNEL
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4851
-#EXTINF:-1 tvg-name="BR: DISNEY JR" tvg-logo="https://docdog.top/logo/countries/brazil/disneyjr.png" group-title="LAME | BRAZIL VIP",BR: DISNEY JR
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4852
-#EXTINF:-1 tvg-name="BR: E!" tvg-logo="https://docdog.top/logo/countries/brazil/e.png" group-title="LAME | BRAZIL VIP",BR: E!
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4853
-#EXTINF:-1 tvg-name="BR: ESPN" tvg-logo="https://docdog.top/logo/countries/brazil/espn.png" group-title="LAME | BRAZIL VIP",BR: ESPN
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4854
-#EXTINF:-1 tvg-name="BR: ESPN 2" tvg-logo="https://docdog.top/logo/countries/brazil/espn2.png" group-title="LAME | BRAZIL VIP",BR: ESPN 2
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4855
-#EXTINF:-1 tvg-name="BR: FOOD NETWORK" tvg-logo="https://docdog.top/logo/countries/brazil/foodnetwork.png" group-title="LAME | BRAZIL VIP",BR: FOOD NETWORK
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4856
-#EXTINF:-1 tvg-name="BR: STAR CHANNEL" group-title="LAME | BRAZIL VIP",BR: STAR CHANNEL
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4857
-#EXTINF:-1 tvg-name="BR: FOX LIFE" tvg-logo="https://docdog.top/logo/countries/brazil/foxlife.png" group-title="LAME | BRAZIL VIP",BR: FOX LIFE
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4858
-#EXTINF:-1 tvg-name="BR: ESPN4" group-title="LAME | BRAZIL VIP",BR: ESPN4
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4859
-#EXTINF:-1 tvg-name="BR: FOX SPORTS 2" tvg-logo="https://docdog.top/logo/countries/brazil/foxsports3.png" group-title="LAME | BRAZIL VIP",BR: FOX SPORTS 2
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4860
-#EXTINF:-1 tvg-name="BR: FX" tvg-logo="https://docdog.top/logo/countries/brazil/fx.png" group-title="LAME | BRAZIL VIP",BR: FX
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4861
-#EXTINF:-1 tvg-name="BR: GLOBO EPTV CAMPINAS" tvg-logo="https://docdog.top/logo/countries/brazil/globoeptvcampinas.png" group-title="LAME | BRAZIL VIP",BR: GLOBO EPTV CAMPINAS
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4862
-#EXTINF:-1 tvg-name="BR: GLOBO INTERNACIONAL" tvg-logo="https://docdog.top/logo/countries/brazil/globointernacional.png" group-title="LAME | BRAZIL VIP",BR: GLOBO INTERNACIONAL
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4863
-#EXTINF:-1 tvg-name="BR: GLOBO NEWS" tvg-logo="https://docdog.top/logo/countries/brazil/globonews.png" group-title="LAME | BRAZIL VIP",BR: GLOBO NEWS
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4864
-#EXTINF:-1 tvg-name="BR: GLOBO" tvg-logo="https://docdog.top/logo/countries/brazil/globosp.png" group-title="LAME | BRAZIL VIP",BR: GLOBO
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4865
-#EXTINF:-1 tvg-name="BR: GLOOB" tvg-logo="https://docdog.top/logo/countries/brazil/gloob.png" group-title="LAME | BRAZIL VIP",BR: GLOOB
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4866
-#EXTINF:-1 tvg-name="BR: GNT" tvg-logo="https://docdog.top/logo/countries/brazil/gnt.png" group-title="LAME | BRAZIL VIP",BR: GNT
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4867
-#EXTINF:-1 tvg-name="BR: H2" tvg-logo="https://docdog.top/logo/countries/brazil/h2.png" group-title="LAME | BRAZIL VIP",BR: H2
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4868
-#EXTINF:-1 tvg-name="BR: HBO 1" tvg-logo="https://docdog.top/logo/countries/brazil/hbo1.png" group-title="LAME | BRAZIL VIP",BR: HBO 1
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4869
-#EXTINF:-1 tvg-name="BR: HBO 2" tvg-logo="https://docdog.top/logo/countries/brazil/hbo2.png" group-title="LAME | BRAZIL VIP",BR: HBO 2
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4870
-#EXTINF:-1 tvg-name="BR: HBO FAMILY" tvg-logo="https://docdog.top/logo/countries/brazil/hbofamily.png" group-title="LAME | BRAZIL VIP",BR: HBO FAMILY
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4871
-#EXTINF:-1 tvg-name="BR: HBO PLUS" tvg-logo="https://docdog.top/logo/countries/brazil/hboplus.png" group-title="LAME | BRAZIL VIP",BR: HBO PLUS
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4872
-#EXTINF:-1 tvg-name="BR: HBO SIGNATURE" tvg-logo="https://docdog.top/logo/countries/brazil/hbosignature.png" group-title="LAME | BRAZIL VIP",BR: HBO SIGNATURE
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4873
-#EXTINF:-1 tvg-name="BR: HISTORY CHANNEL" tvg-logo="https://docdog.top/logo/countries/brazil/historychannel.png" group-title="LAME | BRAZIL VIP",BR: HISTORY CHANNEL
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4874
-#EXTINF:-1 tvg-name="BR: LIFE TIME" tvg-logo="https://docdog.top/logo/countries/brazil/lifetime.png" group-title="LAME | BRAZIL VIP",BR: LIFE TIME
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4875
-#EXTINF:-1 tvg-name="BR: CINEMAX" tvg-logo="https://docdog.top/logo/countries/brazil/cinemax.png" group-title="LAME | BRAZIL VIP",BR: CINEMAX
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4876
-#EXTINF:-1 tvg-name="BR: MEGA PIX" tvg-logo="https://docdog.top/logo/countries/brazil/megapix.png" group-title="LAME | BRAZIL VIP",BR: MEGA PIX
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4877
-#EXTINF:-1 tvg-name="BR: MTV" tvg-logo="https://docdog.top/logo/countries/brazil/mtv.png" group-title="LAME | BRAZIL VIP",BR: MTV
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4878
-#EXTINF:-1 tvg-name="BR: MULTI SHOW" tvg-logo="https://docdog.top/logo/countries/brazil/multishow.png" group-title="LAME | BRAZIL VIP",BR: MULTI SHOW
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4879
-#EXTINF:-1 tvg-name="BR: NAT GEO" tvg-logo="https://docdog.top/logo/countries/brazil/natgeo.png" group-title="LAME | BRAZIL VIP",BR: NAT GEO
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4880
-#EXTINF:-1 tvg-name="BR: NAT GEO KIDS" tvg-logo="https://docdog.top/logo/countries/brazil/natgeokids.png" group-title="LAME | BRAZIL VIP",BR: NAT GEO KIDS
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4881
-#EXTINF:-1 tvg-name="BR: NAT GEO WILD" tvg-logo="https://docdog.top/logo/countries/brazil/natgeowild.png" group-title="LAME | BRAZIL VIP",BR: NAT GEO WILD
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4882
-#EXTINF:-1 tvg-name="BR: NICKELODEON" tvg-logo="https://docdog.top/logo/countries/brazil/nickelodeon.png" group-title="LAME | BRAZIL VIP",BR: NICKELODEON
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4883
-#EXTINF:-1 tvg-name="BR: NOVO TEMPO" tvg-logo="https://docdog.top/logo/countries/brazil/novotempo.png" group-title="LAME | BRAZIL VIP",BR: NOVO TEMPO
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4884
-#EXTINF:-1 tvg-name="BR: OFF" tvg-logo="https://docdog.top/logo/countries/brazil/off.png" group-title="LAME | BRAZIL VIP",BR: OFF
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4885
-#EXTINF:-1 tvg-name="BR: PARAMOUNT CHANNEL" tvg-logo="https://docdog.top/logo/countries/brazil/paramountchannel.png" group-title="LAME | BRAZIL VIP",BR: PARAMOUNT CHANNEL
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4886
-#EXTINF:-1 tvg-name="BR: PREMIERE 2" tvg-logo="https://docdog.top/logo/countries/brazil/premiere2.png" group-title="LAME | BRAZIL VIP",BR: PREMIERE 2
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4887
-#EXTINF:-1 tvg-name="BR: PREMIERE 3" tvg-logo="https://docdog.top/logo/countries/brazil/premiere3.png" group-title="LAME | BRAZIL VIP",BR: PREMIERE 3
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4888
-#EXTINF:-1 tvg-name="BR: PREMIERE 4" tvg-logo="https://docdog.top/logo/countries/brazil/premiere4.png" group-title="LAME | BRAZIL VIP",BR: PREMIERE 4
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4889
-#EXTINF:-1 tvg-name="BR: PREMIERE 5" tvg-logo="https://docdog.top/logo/countries/brazil/premiere5.png" group-title="LAME | BRAZIL VIP",BR: PREMIERE 5
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4890
-#EXTINF:-1 tvg-name="BR: PREMIERE 6" tvg-logo="https://docdog.top/logo/countries/brazil/premiere6.png" group-title="LAME | BRAZIL VIP",BR: PREMIERE 6
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4891
-#EXTINF:-1 tvg-name="BR: PREMIERE CLUBES" tvg-logo="https://docdog.top/logo/countries/brazil/premiereclubes.png" group-title="LAME | BRAZIL VIP",BR: PREMIERE CLUBES
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4892
-#EXTINF:-1 tvg-name="BR: RA TIM BUM" tvg-logo="https://docdog.top/logo/countries/brazil/ratimbum.png" group-title="LAME | BRAZIL VIP",BR: RA TIM BUM
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4893
-#EXTINF:-1 tvg-name="BR: RECORD" tvg-logo="https://docdog.top/logo/countries/brazil/record.png" group-title="LAME | BRAZIL VIP",BR: RECORD
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4894
-#EXTINF:-1 tvg-name="BR: RECORD NEWS" tvg-logo="https://docdog.top/logo/countries/brazil/recordnews.png" group-title="LAME | BRAZIL VIP",BR: RECORD NEWS
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4895
-#EXTINF:-1 tvg-name="BR: REDE TV" tvg-logo="https://docdog.top/logo/countries/brazil/redetv.png" group-title="LAME | BRAZIL VIP",BR: REDE TV
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4896
-#EXTINF:-1 tvg-name="BR: RPC TV CURITIBA" group-title="LAME | BRAZIL VIP",BR: RPC TV CURITIBA
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4897
-#EXTINF:-1 tvg-name="BR: SBT" tvg-logo="https://docdog.top/logo/countries/brazil/sbt.png" group-title="LAME | BRAZIL VIP",BR: SBT
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4898
-#EXTINF:-1 tvg-name="BR: SBT NORDESTE" tvg-logo="https://docdog.top/logo/countries/brazil/SBTNORDESTE.jpg" group-title="LAME | BRAZIL VIP",BR: SBT NORDESTE
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4899
-#EXTINF:-1 tvg-name="BR: SONY" tvg-logo="https://docdog.top/logo/countries/brazil/sony.png" group-title="LAME | BRAZIL VIP",BR: SONY
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4900
-#EXTINF:-1 tvg-name="BR: SPACE" tvg-logo="https://docdog.top/logo/countries/brazil/space.png" group-title="LAME | BRAZIL VIP",BR: SPACE
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4901
-#EXTINF:-1 tvg-name="BR: SPORTV 1" tvg-logo="https://docdog.top/logo/countries/brazil/sportv1.png" group-title="LAME | BRAZIL VIP",BR: SPORTV 1
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4902
-#EXTINF:-1 tvg-name="BR: SPORTV 2" tvg-logo="https://docdog.top/logo/countries/brazil/sportv2.png" group-title="LAME | BRAZIL VIP",BR: SPORTV 2
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4903
-#EXTINF:-1 tvg-name="BR: SPORTV 3" tvg-logo="https://docdog.top/logo/countries/brazil/sportv3.png" group-title="LAME | BRAZIL VIP",BR: SPORTV 3
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4904
-#EXTINF:-1 tvg-name="BR: STUDIO UNIVERSAL" tvg-logo="https://docdog.top/logo/countries/brazil/studiouniversal.png" group-title="LAME | BRAZIL VIP",BR: STUDIO UNIVERSAL
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4905
-#EXTINF:-1 tvg-name="BR: SYFY" tvg-logo="https://docdog.top/logo/countries/brazil/syfy.png" group-title="LAME | BRAZIL VIP",BR: SYFY
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4906
-#EXTINF:-1 tvg-name="BR: TBS" tvg-logo="https://docdog.top/logo/countries/brazil/tbs.png" group-title="LAME | BRAZIL VIP",BR: TBS
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4907
-#EXTINF:-1 tvg-name="BR: TCM" tvg-logo="https://docdog.top/logo/countries/brazil/tcm.png" group-title="LAME | BRAZIL VIP",BR: TCM
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4908
-#EXTINF:-1 tvg-name="BR: TELE CINE ACTION" tvg-logo="https://docdog.top/logo/countries/brazil/telecineaction.png" group-title="LAME | BRAZIL VIP",BR: TELE CINE ACTION
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4909
-#EXTINF:-1 tvg-name="BR: TELE CINE CULT" tvg-logo="https://docdog.top/logo/countries/brazil/telecinecult.png" group-title="LAME | BRAZIL VIP",BR: TELE CINE CULT
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4910
-#EXTINF:-1 tvg-name="BR: TELE CINE FUN" tvg-logo="https://docdog.top/logo/countries/brazil/telecinefun.png" group-title="LAME | BRAZIL VIP",BR: TELE CINE FUN
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4911
-#EXTINF:-1 tvg-name="BR: TELE CINE PIPOCA" tvg-logo="https://docdog.top/logo/countries/brazil/telecinepipoca.png" group-title="LAME | BRAZIL VIP",BR: TELE CINE PIPOCA
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4912
-#EXTINF:-1 tvg-name="BR: TELE CINE PREMIUM" tvg-logo="https://docdog.top/logo/countries/brazil/telecinepremium.png" group-title="LAME | BRAZIL VIP",BR: TELE CINE PREMIUM
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4913
-#EXTINF:-1 tvg-name="BR: TELE CINE TOUCH" tvg-logo="https://docdog.top/logo/countries/brazil/telecinetouch.png" group-title="LAME | BRAZIL VIP",BR: TELE CINE TOUCH
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4914
-#EXTINF:-1 tvg-name="BR: TNT" tvg-logo="https://docdog.top/logo/countries/brazil/tnt.png" group-title="LAME | BRAZIL VIP",BR: TNT
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4915
-#EXTINF:-1 tvg-name="BR: TNT SERIES" tvg-logo="https://docdog.top/logo/countries/brazil/tntseries.png" group-title="LAME | BRAZIL VIP",BR: TNT SERIES
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4916
-#EXTINF:-1 tvg-name="BR: TOONCAST" tvg-logo="https://docdog.top/logo/countries/brazil/tooncast.png" group-title="LAME | BRAZIL VIP",BR: TOONCAST
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4917
-#EXTINF:-1 tvg-name="BR: TV BRASIL" tvg-logo="https://docdog.top/logo/countries/brazil/canalbrasil.png" group-title="LAME | BRAZIL VIP",BR: TV BRASIL
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4918
-#EXTINF:-1 tvg-name="BR: TV DIARIO" tvg-logo="https://docdog.top/logo/countries/brazil/TVDIARIO.jpg" group-title="LAME | BRAZIL VIP",BR: TV DIARIO
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4919
-#EXTINF:-1 tvg-name="BR: TV EVANGELIZAR" group-title="LAME | BRAZIL VIP",BR: TV EVANGELIZAR
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4920
-#EXTINF:-1 tvg-name="BR: UNIVERSAL CHANNEL" tvg-logo="https://docdog.top/logo/countries/brazil/universalchannel.png" group-title="LAME | BRAZIL VIP",BR: UNIVERSAL CHANNEL
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4921
-#EXTINF:-1 tvg-name="BR: VIVA" tvg-logo="https://docdog.top/logo/countries/brazil/viva.png" group-title="LAME | BRAZIL VIP",BR: VIVA
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4922
-#EXTINF:-1 tvg-name="BR: WARNER CHANNEL" tvg-logo="https://docdog.top/logo/countries/brazil/warnerchannel.png" group-title="LAME | BRAZIL VIP",BR: WARNER CHANNEL
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4923
-#EXTINF:-1 tvg-name="BR: WOOHOO" tvg-logo="https://docdog.top/logo/countries/brazil/woohoo.png" group-title="LAME | BRAZIL VIP",BR: WOOHOO
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/4924
-#EXTINF:-1 tvg-name="BR: Record RJ" group-title="LAME | BRAZIL VIP",BR: Record RJ
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/58729
-#EXTINF:-1 tvg-name="BR: Record RS" group-title="LAME | BRAZIL VIP",BR: Record RS
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/58730
-#EXTINF:-1 tvg-name="BR: Record SP" group-title="LAME | BRAZIL VIP",BR: Record SP
-http://31.43.191.125:8080/vip6671769357668/9c933f68998a/58731`;
+async function loadM3UFromUrl(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Falha ao carregar');
+    const text = await response.text();
+    return text;
+  } catch (e) {
+    console.error('Erro ao carregar M3U:', e);
+    return null;
+  }
+}
 
-// ═══════════════════════════════════════════════════════
-//  LISTA 3: BRASIL PREMIUM 4K (completa)
-// ═══════════════════════════════════════════════════════
-const M3U_3 = `#EXTM3U
-#EXTINF:-1 tvg-name="HBO | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzwbNm8Ukd7ifI04MlOhftL59_6xgRrqOKaA&usqp=CAU" group-title="BRASIL PREMIUM",HBO | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111737.ts
-#EXTINF:-1 tvg-name="HBO2 | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzwbNm8Ukd7ifI04MlOhftL59_6xgRrqOKaA&usqp=CAU" group-title="BRASIL PREMIUM",HBO2 | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111736.ts
-#EXTINF:-1 tvg-name="HBO MUNDI | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEPKwmpcqJITl-unFVBYbDN4D5DzmOMqw2Ag&usqp=CAU" group-title="BRASIL PREMIUM",HBO MUNDI | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111738.ts
-#EXTINF:-1 tvg-name="HBO+ | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxOofNFwndRgqNhL3HNoOGHEUsqyuFzEOx0w&usqp=CAU" group-title="BRASIL PREMIUM",HBO+ | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111739.ts
-#EXTINF:-1 tvg-name="HBO POP | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5oAPR2hBv5DWFtR-6dpujdOp4dv2vCZzEbw&usqp=CAU" group-title="BRASIL PREMIUM",HBO POP | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111740.ts
-#EXTINF:-1 tvg-name="HBO SIGNATURE | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcy9c_PN7fR7Zc5CA5ClkN6n_7Cf2vBX-2uQ&usqp=CAU" group-title="BRASIL PREMIUM",HBO SIGNATURE | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111741.ts
-#EXTINF:-1 tvg-name="STUDIO UNIVERSAL | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxdvjF6gfMCAv8Ja87zAwPQWI27Jg2vzljUA&usqp=CAU" group-title="BRASIL PREMIUM",STUDIO UNIVERSAL | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111764.ts
-#EXTINF:-1 tvg-name="TNT | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMWKIzL4Rs9p84JwniVQXDKTPyCr7-C6P5HQ&usqp=CAU" group-title="BRASIL PREMIUM",TNT | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111772.ts
-#EXTINF:-1 tvg-name="TNT SERIES | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhdfTfMQZPPvq00cu7qc-_QV6uqFyEPGtPlQ&usqp=CAU" group-title="BRASIL PREMIUM",TNT SERIES | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111773.ts
-#EXTINF:-1 tvg-name="UNIVERSAL CHANNEL | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPc7agmfTc7NChaktZhWesX40wIMchRq5AZQ&usqp=CAU" group-title="BRASIL PREMIUM",UNIVERSAL CHANNEL | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111778.ts
-#EXTINF:-1 tvg-name="WARNER | 4k" tvg-logo="https://yt3.ggpht.com/EkEf4N2GOXbtAoctm5VjCHdErqapaQ2ZCtLTrfv9es6rWcRXZSUmcauCPRWOgrpyB1xHeBAmfw=s900-c-k-c0x00ffffff-no-rj" group-title="BRASIL PREMIUM",WARNER | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111780.ts
-#EXTINF:-1 tvg-name="AMC | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTTLPKCymblo_2mWz3EvvEcgfiOM-qQaWHJg&usqp=CAU" group-title="BRASIL PREMIUM",AMC | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111688.ts
-#EXTINF:-1 tvg-name="AXN | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKs1Ust5w2AcsfDKJuwL3tz-wBMClM9fkO0g&usqp=CAU" group-title="BRASIL PREMIUM",AXN | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111690.ts
-#EXTINF:-1 tvg-name="CINEMAX | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdIaMlEJ9IbvR0p1Dx0preN5i4FEntc7ee-g&usqp=CAU" group-title="BRASIL PREMIUM",CINEMAX | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111696.ts
-#EXTINF:-1 tvg-name="PARAMOUNT CHANNEL | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlWd1uG0JTS9ZnAQO-NbfBQPWi9twUqLZqdA&usqp=CAU" group-title="BRASIL PREMIUM",PARAMOUNT CHANNEL | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111754.ts
-#EXTINF:-1 tvg-name="SONY | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQId23juGnAuOq4bEGErQ3zj5Tm6JgEYFKGvg&usqp=CAU" group-title="BRASIL PREMIUM",SONY | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111759.ts
-#EXTINF:-1 tvg-name="SPACE | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_htwlVuuX1Ntrq3fJiUBcnzQ2YJYrf1HVzQ&usqp=CAU" group-title="BRASIL PREMIUM",SPACE | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111760.ts
-#EXTINF:-1 tvg-name="A&E | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiGJMhrpdS0L4wBXBGmOkobRQI_Psx21w3vA&usqp=CAU" group-title="BRASIL PREMIUM",A&E | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111687.ts
-#EXTINF:-1 tvg-name="STAR CHANNEL | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjtXUYnn2T_AODcGAm1tbDRT4szaBbHO7HqQ&usqp=CAU" group-title="BRASIL PREMIUM",STAR CHANNEL | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111718.ts
-#EXTINF:-1 tvg-name="TELECINE FUN | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_0Y5KRVBhCAuKXktcq4HFTls06BLqjE0BPQ&usqp=CAU" group-title="BRASIL PREMIUM",TELECINE FUN | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111768.ts
-#EXTINF:-1 tvg-name="TELECINE ACTION | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbZC3SIjNdwUvzfyt46vNofHJcvEtMV-dVOA&usqp=CAU" group-title="BRASIL PREMIUM",TELECINE ACTION | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111766.ts
-#EXTINF:-1 tvg-name="TELECINE CULT | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlqD2YOQKttJbQ9DtDe1iiloL4Lezxl4wPyw&usqp=CAU" group-title="BRASIL PREMIUM",TELECINE CULT | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111767.ts
-#EXTINF:-1 tvg-name="TELECINE PIPOCA | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQn69U1m8UiQ1GTJHBxHG3sX681oaj_Yl5ikg&usqp=CAU" group-title="BRASIL PREMIUM",TELECINE PIPOCA | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111769.ts
-#EXTINF:-1 tvg-name="TELECINE PREMIUM | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5_qDQGfgObHyFffB3FWXuPtDXvu_eugDblA&usqp=CAU" group-title="BRASIL PREMIUM",TELECINE PREMIUM | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111770.ts
-#EXTINF:-1 tvg-name="TELECINE TOUCH | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmf42H9MB-4Q6lyVfrh77qPeG4KFri1nICyg&usqp=CAU" group-title="BRASIL PREMIUM",TELECINE TOUCH | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111771.ts
-#EXTINF:-1 tvg-name="SPORTV | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGwV9arEAMwaX8a6tXDrVRsmBPxRgj-5Yf2w&usqp=CAU" group-title="BRASIL PREMIUM",SPORTV | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111761.ts
-#EXTINF:-1 tvg-name="SPORTV2 | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGwV9arEAMwaX8a6tXDrVRsmBPxRgj-5Yf2w&usqp=CAU" group-title="BRASIL PREMIUM",SPORTV2 | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111762.ts
-#EXTINF:-1 tvg-name="SPORTV3 | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRX9X7CtVs1mFKV32bnqzl-JVdRZtf9qPT0mw&usqp=CAU" group-title="BRASIL PREMIUM",SPORTV3 | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111763.ts
-#EXTINF:-1 tvg-name="BAND SP | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmN7Lf94uwCrO0DV7xSHXpYCC-EsvmWJ9ULw&usqp=CAU" group-title="BRASIL PREMIUM",BAND SP | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111692.ts
-#EXTINF:-1 tvg-name="COMBATE | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMDI-amZK50OG8ZkHa-wCtXg2Ye3CPLkGg9w&usqp=CAU" group-title="BRASIL PREMIUM",COMBATE | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111698.ts
-#EXTINF:-1 tvg-name="ESPN2 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzPF7o555O8KtseEn-GAIlp4pYbtLgMUcbGQ&usqp=CAU" group-title="BRASIL PREMIUM",ESPN2 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111712.ts
-#EXTINF:-1 tvg-name="ESPN3 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzPF7o555O8KtseEn-GAIlp4pYbtLgMUcbGQ&usqp=CAU" group-title="BRASIL PREMIUM",ESPN3 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111713.ts
-#EXTINF:-1 tvg-name="FISH TV | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqmZDjqc3JHRmBWsDwrTzIBJOMu2VERXMFBA&usqp=CAU" group-title="BRASIL PREMIUM",FISH TV | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111716.ts
-#EXTINF:-1 tvg-name="RECORD SP | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwSOG35zAjlaa8XVSppPwTCl66-C6grIzrBg&usqp=CAU" group-title="BRASIL PREMIUM",RECORD SP | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111757.ts
-#EXTINF:-1 tvg-name="GLOBO NEWS | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEcGQMcaWPGZcyZvRMV0y4EUieAsJnGPyNLg&usqp=CAU" group-title="BRASIL PREMIUM",GLOBO NEWS | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111726.ts
-#EXTINF:-1 tvg-name="GLOBO RJ | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwuvcFaawQ-vRqHj5UFGOLcF_h9Ns7OEvqNw&usqp=CAU" group-title="BRASIL PREMIUM",GLOBO RJ | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111729.ts
-#EXTINF:-1 tvg-name="GLOBO SP | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvberWjGXQaW2clxzrrluE03yachykb03wcQ&usqp=CAU" group-title="BRASIL PREMIUM",GLOBO SP | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111730.ts
-#EXTINF:-1 tvg-name="GLOBO TRIBUNA SANTOS | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGV5XlaA6Ry_wZKlKLYLrnxwT9ovNCW2E9-A&usqp=CAU" group-title="BRASIL PREMIUM",GLOBO TRIBUNA SANTOS | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111731.ts
-#EXTINF:-1 tvg-name="GLOBO | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ9d1YrpmkzUwbIqLY-fbNVjM76FpRpA791Q&usqp=CAU" group-title="BRASIL PREMIUM",GLOBO | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111733.ts
-#EXTINF:-1 tvg-name="Religi" group-title="BRASIL PREMIUM",Religi
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/138493.ts
-#EXTINF:-1 tvg-name="Noticia" group-title="BRASIL PREMIUM",Noticia
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/138492.ts
-#EXTINF:-1 tvg-name="BAND NEWS | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHCqXoszESUfTq01J-ylWqvlx_8KKUXw6WDQ&usqp=CAU" group-title="BRASIL PREMIUM",BAND NEWS | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111788.ts
-#EXTINF:-1 tvg-name="MAIS NA TELA | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUgkSHzsUplUglXYkyc4g5ctQgFEj_WoVAUA&usqp=CAU" group-title="BRASIL PREMIUM",MAIS NA TELA | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111732.ts
-#EXTINF:-1 tvg-name="NATGEO WILD | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUrZ29fVj4drvmzHYIT14u43hmRZvOWMGVJw&usqp=CAU" group-title="BRASIL PREMIUM",NATGEO WILD | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111750.ts
-#EXTINF:-1 tvg-name="NATIONAL GEOGRAPHIC | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhr-_qkw-1COwq8e9hlWZb5JLS-UJ7BVb8DQ&usqp=CAU" group-title="BRASIL PREMIUM",NATIONAL GEOGRAPHIC | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111751.ts
-#EXTINF:-1 tvg-name="ANIMAL PLANET | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDxMyOTOfhmadKQ4PJjZSaUNggGfVVm4-sLA&usqp=CAU" group-title="BRASIL PREMIUM",ANIMAL PLANET | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111689.ts
-#EXTINF:-1 tvg-name="COMEDY CENTRAL | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSC7GatJMPXd6Rc_OXRQXzMFvOYrcqMe5tglw&usqp=CAU" group-title="BRASIL PREMIUM",COMEDY CENTRAL | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111699.ts
-#EXTINF:-1 tvg-name="DISCOVERY CHANNEL | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8CgM6YgWdffgELi7z4EjooXWDR57mh5iaug&usqp=CAU" group-title="BRASIL PREMIUM",DISCOVERY CHANNEL | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111700.ts
-#EXTINF:-1 tvg-name="DISCOVERY HOME & HEALTH | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTY6Zkc18mX16h0ILB1QJ3r2kURqtn8RbCEXg&usqp=CAU" group-title="BRASIL PREMIUM",DISCOVERY HOME & HEALTH | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111701.ts
-#EXTINF:-1 tvg-name="DISCOVERY SCIENCE | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlGEoipbbvqcBTHBFibh803CNu3JSYYofPpg&usqp=CAU" group-title="BRASIL PREMIUM",DISCOVERY SCIENCE | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111703.ts
-#EXTINF:-1 tvg-name="DISCOVERY THEATER | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZ0bnIzKpymyAvsfbfhBOq54ZcQtMRVytUog&usqp=CAU" group-title="BRASIL PREMIUM",DISCOVERY THEATER | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111704.ts
-#EXTINF:-1 tvg-name="DISCOVERY TLC | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRk6gUZpFkIh0ZrJn5XI3jfyfUC776qI97SQ&usqp=CAU" group-title="BRASIL PREMIUM",DISCOVERY TLC | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111705.ts
-#EXTINF:-1 tvg-name="DISCOVERY TURBO | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfj23A-PM7AJvgfmHZs-i6IdkRl0stw4shYw&usqp=CAU" group-title="BRASIL PREMIUM",DISCOVERY TURBO | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111706.ts
-#EXTINF:-1 tvg-name="HISTORY2 | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYJ8U1zE4HmML93N6w3TRYhWdAg3oSGQgfQw&usqp=CAU" group-title="BRASIL PREMIUM",HISTORY2 | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111735.ts
-#EXTINF:-1 tvg-name="HISTORY CHANNEL | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROpjNmXn_87LUT20R4Ui66R6YpEURX6gsGhw&usqp=CAU" group-title="BRASIL PREMIUM",HISTORY CHANNEL | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111743.ts
-#EXTINF:-1 tvg-name="DISCOVERY ID | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQC6lFXwNGNmZBlCPCsRRM6Wrz6gU4qK_kCMA&usqp=CAU" group-title="BRASIL PREMIUM",DISCOVERY ID | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111744.ts
-#EXTINF:-1 tvg-name="REDE TV | 4k" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ8sfT9pigHcszhbA_if32NgvRghQVbHTm3g&usqp=CAU" group-title="BRASIL PREMIUM",REDE TV | 4k
-http://mundo2.vip:80//live/12MPremiumSep22/GswvTRBXTB/111758.ts`;
-
-const BUILTIN_SOURCES = [
-  { name: "85 Brazilian Channels", tag: "standard", data: M3U_1 },
-  { name: "Brazil VIP", tag: "vip", data: M3U_2 },
-  { name: "Brasil Premium 4K", tag: "premium", data: M3U_3 }
-];
-
-// ═══════════════════════════════════════════════════════
-//  PARSER & CATEGORIAS
-// ═══════════════════════════════════════════════════════
-function parseM3U(text, sourceTag, sourceName) {
+function parseM3U(text, sourceName = 'Lista Externa') {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const channels = [];
+  
   for (let i = 0; i < lines.length; i++) {
     if (lines[i].startsWith('#EXTINF')) {
       const info = lines[i];
       const url = lines[i + 1];
       if (!url || url.startsWith('#')) continue;
+      
       const nameMatch = info.match(/,(.+)$/);
       const groupMatch = info.match(/group-title="([^"]*)"/);
       const logoMatch = info.match(/tvg-logo="([^"]*)"/);
+      
       const name = nameMatch ? nameMatch[1].trim() : 'Canal';
-      const group = groupMatch ? groupMatch[1] : 'Outros';
+      const group = groupMatch ? groupMatch[1] : 'Sem Grupo';
       const logo = logoMatch ? logoMatch[1] : '';
+      
       channels.push({
-        name, group, logo, url, sourceTag, sourceName,
-        id: sourceTag + '_' + channels.length + '_' + Math.random().toString(36).substr(2,6)
+        name,
+        group,
+        logo,
+        url,
+        sourceName,
+        id: channels.length,
+        subCat: getSubCategory(name)
       });
     }
   }
+  
   return channels;
 }
 
@@ -1262,182 +428,9 @@ function getSubCategory(name) {
   if (/\b(disney|cartoon|nick|gloob|baby|toonz|zoomoo|discovery kids|bandkids|anime|naruto|tokusato|tooncast|retro cartoon|boomerang)\b/.test(n)) return '🧸 Infantil';
   if (/\b(news|cnn|globo news|band news|record news|jovem pan|noticia)\b/.test(n)) return '📰 Notícias';
   if (/\b(mtv|multishow|multi show|gnt|comedy|e!|lifetime|woohoo|kpop|music box|off|viva|tastemade)\b/.test(n)) return '🎵 Entretenimento';
-  if (/\b(gospel|cancao nova|evangelizar|pai eterno|nova era|novo tempo|hope|fonte tv|terceiro anjo|religi)\b/.test(n)) return '✝ Religioso';
-  if (/\b(food|masterchef|tastemade|24 kitchen|hgtv|tlc|fish|agro|terra viva|travel)\b/.test(n)) return '🍳 Gastronomia & Lifestyle';
   return '📡 Outros';
 }
 
-function rebuildChannels() {
-  allChannels = [];
-  BUILTIN_SOURCES.forEach(src => {
-    const parsed = parseM3U(src.data, src.tag, src.name);
-    allChannels.push(...parsed);
-  });
-  if (settings.customM3U && settings.customM3U.trim()) {
-    let customData = settings.customM3U.trim();
-    if (customData.startsWith('http://') || customData.startsWith('https://')) {
-      loadCustomM3U(customData);
-    } else if (customData.startsWith('#EXTM3U')) {
-      const parsed = parseM3U(customData, 'custom', 'Lista Customizada');
-      allChannels.push(...parsed);
-    }
-  }
-  allChannels.forEach(ch => { ch.subCat = getSubCategory(ch.name); });
-}
-
-async function loadCustomM3U(url) {
-  let text = null;
-  if (settings.proxy) {
-    for (const proxy of PROXIES) {
-      try {
-        const res = await fetch(proxy.url + encodeURIComponent(url));
-        if (res.ok) { text = await res.text(); break; }
-      } catch (e) {}
-    }
-  } else {
-    try { const res = await fetch(url); if (res.ok) text = await res.text(); } catch (e) {}
-  }
-  if (text && text.includes('#EXTM3U')) {
-    const parsed = parseM3U(text, 'custom', 'Lista Customizada');
-    parsed.forEach(ch => { ch.subCat = getSubCategory(ch.name); });
-    allChannels.push(...parsed);
-    renderAll();
-    showToast(`${parsed.length} canais carregados da URL`, 'success');
-  }
-}
-
-// ═══════════════════════════════════════════════════════
-//  CLOUD SYNC
-// ═══════════════════════════════════════════════════════
-async function cloudSync() {
-  const apiKey = settings.apiKey; const binId = settings.binId;
-  if (!apiKey || !binId) { setSyncStatus('error', 'Configure API Key e Bin ID'); return null; }
-  setSyncStatus('syncing', 'Sincronizando com nuvem...');
-  document.getElementById('syncBtn').classList.add('loading');
-  try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, { headers: { 'X-Master-Key': apiKey } });
-    if (res.ok) { const data = await res.json(); setSyncStatus('online', `Sincronizado · ${new Date().toLocaleTimeString('pt-BR')}`); return data.record || {}; }
-    else { setSyncStatus('error', 'Falha ao ler da nuvem'); return null; }
-  } catch (e) { setSyncStatus('error', 'Erro de conexão'); return null; }
-  finally { document.getElementById('syncBtn').classList.remove('loading'); }
-}
-
-async function cloudSave(payload) {
-  const apiKey = settings.apiKey; const binId = settings.binId;
-  if (!apiKey || !binId) return false;
-  try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': apiKey },
-      body: JSON.stringify(payload)
-    });
-    return res.ok;
-  } catch (e) { return false; }
-}
-
-async function performSync() {
-  showToast('Sincronizando com a nuvem...', 'info');
-  const record = await cloudSync();
-  if (record) {
-    if (record.favorites) { favorites = record.favorites; localStorage.setItem('iptv_favorites', JSON.stringify(favorites)); }
-    if (record.settings) { settings = { ...settings, ...record.settings }; localStorage.setItem('iptv_settings', JSON.stringify(settings)); }
-    if (record.customM3U) { settings.customM3U = record.customM3U; localStorage.setItem('iptv_settings', JSON.stringify(settings)); }
-    showToast('Sincronização concluída!', 'success');
-    rebuildChannels(); renderAll();
-  } else {
-    const ok = await cloudSave({
-      favorites,
-      settings: { apiKey: settings.apiKey, binId: settings.binId, proxy: settings.proxy, autoPlay: settings.autoPlay, autoSync: settings.autoSync },
-      customM3U: settings.customM3U || '', updatedAt: new Date().toISOString()
-    });
-    if (ok) { showToast('Dados enviados para a nuvem!', 'success'); setSyncStatus('online', `Enviado · ${new Date().toLocaleTimeString('pt-BR')}`); }
-    else showToast('Falha ao sincronizar', 'error');
-  }
-}
-
-function setSyncStatus(state, text) {
-  const el = document.getElementById('syncStatus');
-  el.className = 'sync-status ' + state;
-  document.getElementById('syncStatusText').textContent = text;
-}
-
-// ═══════════════════════════════════════════════════════
-//  PLAYER COM PROXY CHAIN
-// ═══════════════════════════════════════════════════════
-async function tryPlayWithProxies(channel) {
-  const placeholder = document.getElementById('videoPlaceholder');
-  const msg = document.getElementById('placeholderMsg');
-  const warn = document.getElementById('placeholderWarn');
-  const proxyStatus = document.getElementById('proxyStatus');
-  placeholder.style.display = 'grid';
-  document.getElementById('video').style.display = 'none';
-  msg.textContent = `Tentando reproduzir "${channel.name}"...`;
-  warn.textContent = '';
-  proxyStatus.innerHTML = '';
-
-  const attempts = [{ name: 'Conexão Direta', url: channel.url, useProxy: false }];
-  if (settings.proxy) {
-    PROXIES.forEach(p => attempts.push({ name: p.name, url: p.url + encodeURIComponent(channel.url), useProxy: true }));
-  }
-
-  for (let i = 0; i < attempts.length; i++) {
-    const attempt = attempts[i];
-    proxyStatus.innerHTML = attempts.map((a, idx) => {
-      let cls = idx < i ? 'fail' : idx === i ? 'trying' : '';
-      return `<div class="proxy-row ${cls}"><span class="indicator"></span><span>${idx < i ? '✗' : idx === i ? '⟳' : '○'} ${a.name}</span></div>`;
-    }).join('');
-    const success = await tryPlayUrl(attempt.url, channel);
-    if (success) {
-      proxyStatus.innerHTML = attempts.map((a, idx) => {
-        let cls = idx < i ? 'fail' : idx === i ? 'success' : '';
-        return `<div class="proxy-row ${cls}"><span class="indicator"></span><span>${idx < i ? '✗' : idx === i ? '✓' : '○'} ${a.name}</span></div>`;
-      }).join('');
-      return;
-    }
-  }
-  showStreamError(channel);
-  proxyStatus.innerHTML = attempts.map(a => `<div class="proxy-row fail"><span class="indicator"></span><span>✗ ${a.name}</span></div>`).join('');
-}
-
-function tryPlayUrl(url, channel) {
-  return new Promise((resolve) => {
-    const video = document.getElementById('video');
-    const placeholder = document.getElementById('videoPlaceholder');
-    if (hls) { hls.destroy(); hls = null; }
-    video.pause(); video.removeAttribute('src'); video.load();
-    let resolved = false;
-    const timeout = setTimeout(() => { if (!resolved) { resolved = true; resolve(false); } }, 8000);
-    const onSuccess = () => {
-      if (resolved) return;
-      resolved = true; clearTimeout(timeout);
-      placeholder.style.display = 'none'; video.style.display = 'block';
-      video.play().catch(() => {}); resolve(true);
-    };
-    const onFail = () => { if (resolved) return; resolved = true; clearTimeout(timeout); resolve(false); };
-    video.oncanplay = onSuccess; video.onerror = onFail;
-    const isHLS = url.includes('.m3u8');
-    if (isHLS && window.Hls && Hls.isSupported()) {
-      hls = new Hls({ enableWorker: true });
-      hls.loadSource(url); hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, onSuccess);
-      hls.on(Hls.Events.ERROR, (e, data) => { if (data.fatal) onFail(); });
-    } else { video.src = url; video.load(); }
-  });
-}
-
-function showStreamError(channel) {
-  const video = document.getElementById('video');
-  const placeholder = document.getElementById('videoPlaceholder');
-  const msg = document.getElementById('placeholderMsg');
-  const warn = document.getElementById('placeholderWarn');
-  video.style.display = 'none'; placeholder.style.display = 'grid';
-  msg.textContent = `Não foi possível reproduzir "${channel.name}"`;
-  warn.innerHTML = `⚠ O stream pode estar offline, exigir autenticação ou estar bloqueado por CORS.<br><strong>Dica:</strong> Copie a URL e use em um player externo (VLC, IPTV Smarters).`;
-}
-
-// ═══════════════════════════════════════════════════════
-//  RENDER
-// ═══════════════════════════════════════════════════════
 function getInitials(name) {
   const clean = name.replace(/^(BR|COL|USA):\s*/i, '').replace(/\s*\|\s*4k/i, '').trim();
   const words = clean.split(/[\s\/]+/).filter(w => w.length > 0);
@@ -1445,245 +438,414 @@ function getInitials(name) {
   return (words[0][0] + (words[1][0] || '')).toUpperCase();
 }
 
-function sourceBadge(tag) {
-  if (tag === 'premium') return '<span class="ch-source premium">★ 4K Premium</span>';
-  if (tag === 'vip') return '<span class="ch-source vip">VIP</span>';
-  if (tag === 'custom') return '<span class="ch-source cloud">☁ Cloud</span>';
-  return '<span class="ch-source">Standard</span>';
-}
-
-function isFavorite(id) { return favorites.includes(id); }
-
-function toggleFavorite(id, e) {
-  if (e) e.stopPropagation();
-  const idx = favorites.indexOf(id);
-  if (idx >= 0) { favorites.splice(idx, 1); showToast('Removido dos favoritos', 'info'); }
-  else { favorites.push(id); showToast('Adicionado aos favoritos', 'success'); }
-  localStorage.setItem('iptv_favorites', JSON.stringify(favorites));
-  renderAll();
-}
-
-function renderShortcuts() {
-  const el = document.getElementById('shortcutList');
-  el.innerHTML = `
-    <div class="cat-item ${activeShortcut === 'all' ? 'active' : ''}" data-shortcut="all">
-      <span>📡 Todos os Canais</span><span class="cat-count">${allChannels.length}</span>
-    </div>
-    <div class="cat-item ${activeShortcut === 'favorites' ? 'active' : ''}" data-shortcut="favorites">
-      <span>⭐ Favoritos</span><span class="cat-count">${favorites.length}</span>
-    </div>`;
-  el.querySelectorAll('.cat-item').forEach(item => {
-    item.addEventListener('click', () => { activeShortcut = item.dataset.shortcut; activeGroup = 'all'; activeSource = 'all'; renderAll(); });
-  });
-}
-
-function renderSources() {
-  const sourceMap = {};
-  allChannels.forEach(ch => { sourceMap[ch.sourceTag] = sourceMap[ch.sourceTag] || { name: ch.sourceName, count: 0 }; sourceMap[ch.sourceTag].count++; });
-  const el = document.getElementById('sourceList');
-  let html = `<div class="cat-item ${activeSource === 'all' ? 'active' : ''}" data-src="all"><span>Todas as Fontes</span><span class="cat-count">${allChannels.length}</span></div>`;
-  Object.keys(sourceMap).forEach(tag => {
-    html += `<div class="cat-item ${activeSource === tag ? 'active' : ''}" data-src="${tag}"><span>${sourceMap[tag].name}</span><span class="cat-count">${sourceMap[tag].count}</span></div>`;
-  });
-  el.innerHTML = html;
-  el.querySelectorAll('.cat-item').forEach(item => {
-    item.addEventListener('click', () => { activeSource = item.dataset.src; activeShortcut = 'all'; renderAll(); });
-  });
-}
-
-function renderCategories() {
-  const catMap = {};
-  allChannels.forEach(ch => { catMap[ch.subCat] = (catMap[ch.subCat] || 0) + 1; });
-  const categories = Object.keys(catMap).sort();
-  const el = document.getElementById('catList');
-  let html = `<div class="cat-item ${activeGroup === 'all' ? 'active' : ''}" data-cat="all"><span>Todas as Categorias</span><span class="cat-count">${allChannels.length}</span></div>`;
-  categories.forEach(cat => {
-    html += `<div class="cat-item ${activeGroup === cat ? 'active' : ''}" data-cat="${cat}"><span>${cat}</span><span class="cat-count">${catMap[cat]}</span></div>`;
-  });
-  el.innerHTML = html;
-  el.querySelectorAll('.cat-item').forEach(item => {
-    item.addEventListener('click', () => { activeGroup = item.dataset.cat; activeShortcut = 'all'; renderAll(); });
-  });
-}
-
-function getFilteredChannels() {
-  let filtered = allChannels;
-  if (activeShortcut === 'favorites') filtered = filtered.filter(ch => favorites.includes(ch.id));
-  else {
-    if (activeSource !== 'all') filtered = filtered.filter(ch => ch.sourceTag === activeSource);
-    if (activeGroup !== 'all') filtered = filtered.filter(ch => ch.subCat === activeGroup);
-  }
-  if (currentSearch) { const q = currentSearch.toLowerCase(); filtered = filtered.filter(ch => ch.name.toLowerCase().includes(q)); }
-  return filtered;
-}
-
-function renderGrid() {
-  const grid = document.getElementById('grid');
-  const filtered = getFilteredChannels();
-  if (filtered.length === 0) {
-    grid.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Nenhum canal encontrado</p></div>`;
-    return;
-  }
-  grid.innerHTML = filtered.map(ch => {
-    const logoHtml = ch.logo ? `<img src="${ch.logo}" alt="${ch.name}" onerror="this.parentElement.innerHTML='${getInitials(ch.name)}'">` : getInitials(ch.name);
-    const isFav = isFavorite(ch.id);
-    return `
-    <div class="channel ${currentChannel && currentChannel.id === ch.id ? 'playing' : ''}" data-id="${ch.id}">
-      <button class="fav-btn ${isFav ? 'active' : ''}" data-fav="${ch.id}" title="Favoritar">
-        <svg viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      </button>
-      <div class="ch-top">
-        <div class="ch-logo">${logoHtml}</div>
-        <div class="ch-info">
-          <div class="ch-name" title="${ch.name}">${ch.name}</div>
-          <div class="ch-group">${ch.subCat}</div>
-          <div class="ch-badges">${sourceBadge(ch.sourceTag)}</div>
-        </div>
-      </div>
-      <div class="ch-play"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
-    </div>`;
-  }).join('');
-  grid.querySelectorAll('.channel').forEach(el => {
-    el.addEventListener('click', () => { const ch = allChannels.find(c => c.id === el.dataset.id); if (ch) playChannel(ch); });
-  });
-  grid.querySelectorAll('.fav-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => toggleFavorite(btn.dataset.fav, e));
-  });
-}
-
-function updateHeader() {
-  let title = 'Todos os Canais';
-  if (activeShortcut === 'favorites') title = '⭐ Favoritos';
-  else if (activeSource !== 'all') { const src = BUILTIN_SOURCES.find(s => s.tag === activeSource); title = src ? src.name : activeSource; }
-  if (activeGroup !== 'all' && activeShortcut !== 'favorites') title += ` · ${activeGroup}`;
-  document.getElementById('viewTitle').textContent = title;
-  const filtered = getFilteredChannels();
-  document.getElementById('viewSubtitle').textContent = `${filtered.length} canais disponíveis`;
-  document.getElementById('statTotal').textContent = allChannels.length;
-  document.getElementById('statCats').textContent = new Set(allChannels.map(c => c.subCat)).size;
-  document.getElementById('statSources').textContent = new Set(allChannels.map(c => c.sourceTag)).size;
-  document.getElementById('statFavs').textContent = favorites.length;
-}
-
-function renderAll() { renderShortcuts(); renderSources(); renderCategories(); renderGrid(); updateHeader(); }
-
-// ═══════════════════════════════════════════════════════
-//  PLAYER
-// ═══════════════════════════════════════════════════════
+// PLAYER FUNCTIONS
 function playChannel(channel) {
   currentChannel = channel;
-  document.getElementById('playerWrap').classList.add('show');
-  document.getElementById('nowPlayingName').textContent = channel.name;
-  renderGrid();
-  document.getElementById('playerWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  tryPlayWithProxies(channel);
+  
+  const playerSection = document.getElementById('playerSection');
+  const video = document.getElementById('videoPlayer');
+  const placeholder = document.getElementById('videoPlaceholder');
+  const msg = document.getElementById('placeholderMsg');
+  const warn = document.getElementById('placeholderWarn');
+  const errBox = document.getElementById('errBox');
+  const playerBtns = document.getElementById('playerBtns');
+  
+  playerSection.classList.add('show');
+  document.getElementById('playerChannelName').textContent = channel.name;
+  
+  // Limpa player anterior
+  if (hls) {
+    try { hls.destroy(); } catch(e) {}
+    hls = null;
+  }
+  video.removeAttribute('src');
+  video.load();
+  
+  placeholder.style.display = 'none';
+  video.style.display = 'block';
+  msg.textContent = 'Tentando conectar ao stream...';
+  warn.textContent = '';
+  errBox.innerHTML = '';
+  playerBtns.innerHTML = '';
+  
+  const url = channel.url;
+  
+  // Timeout para mostrar erro se não conectar em 5 segundos
+  const timeout = setTimeout(() => {
+    if (video.readyState < 3) {
+      showPlaybackError(channel);
+    }
+  }, 5000);
+  
+  // Tenta reproduzir
+  try {
+    if (url.includes('.m3u8') && window.Hls && Hls.isSupported()) {
+      hls = new Hls({ enableWorker: true });
+      hls.loadSource(url);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        clearTimeout(timeout);
+        video.play().catch(() => {});
+      });
+      hls.on(Hls.Events.ERROR, (e, data) => {
+        if (data && data.fatal) {
+          clearTimeout(timeout);
+          showPlaybackError(channel);
+        }
+      });
+    } else {
+      video.src = url;
+      video.onloadeddata = () => {
+        clearTimeout(timeout);
+        video.play().catch(() => {});
+      };
+      video.onerror = () => {
+        clearTimeout(timeout);
+        showPlaybackError(channel);
+      };
+      video.load();
+    }
+  } catch (e) {
+    clearTimeout(timeout);
+    showPlaybackError(channel);
+  }
+  
+  // Atualiza visual dos cards
+  renderChannels();
+  
+  // Scroll para o player
+  playerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function closePlayerFn() {
-  document.getElementById('playerWrap').classList.remove('show');
-  if (hls) { hls.destroy(); hls = null; }
-  const video = document.getElementById('video');
-  video.pause(); video.removeAttribute('src');
-  currentChannel = null; renderGrid();
+function showPlaybackError(channel) {
+  const video = document.getElementById('videoPlayer');
+  const placeholder = document.getElementById('videoPlaceholder');
+  const msg = document.getElementById('placeholderMsg');
+  const warn = document.getElementById('placeholderWarn');
+  const errBox = document.getElementById('errBox');
+  const playerBtns = document.getElementById('playerBtns');
+  
+  video.style.display = 'none';
+  placeholder.style.display = 'grid';
+  msg.textContent = `Não foi possível reproduzir "${channel.name}"`;
+  warn.textContent = '';
+  
+  errBox.innerHTML = `
+    <div class="err-box">
+      <strong>⚠ Stream bloqueado pelo navegador</strong>
+      Navegadores bloqueiam streams IPTV por políticas de segurança (CORS/mixed content).<br><br>
+      <strong>Soluções:</strong>
+      <ol>
+        <li><strong>VLC Media Player</strong> (recomendado):<br>
+          Abra o VLC → Mídia → Abrir Transmissão de Rede → Cole a URL abaixo
+        </li>
+        <li><strong>IPTV Smarters</strong> ou <strong>TiviMate</strong> (Android/Smart TV)</li>
+        <li>Importe a lista M3U completa no seu player preferido</li>
+      </ol>
+      <strong>URL do stream:</strong>
+      <code>${channel.url}</code>
+    </div>
+  `;
+  
+  playerBtns.innerHTML = `
+    <button class="primary" onclick="copyCurrentUrl()">📋 Copiar URL</button>
+    <button onclick="openInVLC()">🎬 Abrir no VLC</button>
+    <button onclick="openInNewTab()">🔗 Abrir URL</button>
+  `;
 }
 
 function copyCurrentUrl() {
   if (!currentChannel) return;
-  navigator.clipboard.writeText(currentChannel.url).then(() => showToast('URL copiada!', 'success')).catch(() => showToast('Falha ao copiar', 'error'));
+  copyUrl(currentChannel.url);
 }
 
-// ═══════════════════════════════════════════════════════
-//  MODAL & TOAST
-// ═══════════════════════════════════════════════════════
-function openModal(id) { document.getElementById(id).classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-function showToast(msg, type = 'info') {
+function openInVLC() {
+  if (!currentChannel) return;
+  window.location.href = `vlc://${currentChannel.url}`;
+  setTimeout(() => {
+    showToast('Se o VLC não abriu, copie a URL e cole manualmente', 'success');
+  }, 500);
+}
+
+function openInNewTab() {
+  if (!currentChannel) return;
+  window.open(currentChannel.url, '_blank');
+}
+
+function closePlayer() {
+  const playerSection = document.getElementById('playerSection');
+  const video = document.getElementById('videoPlayer');
+  
+  playerSection.classList.remove('show');
+  
+  if (hls) {
+    try { hls.destroy(); } catch(e) {}
+    hls = null;
+  }
+  
+  video.removeAttribute('src');
+  video.load();
+  currentChannel = null;
+  
+  renderChannels();
+}
+
+function copyUrl(url) {
+  navigator.clipboard.writeText(url)
+    .then(() => showToast('URL copiada! Cole no VLC: Mídia → Abrir Transmissão de Rede', 'success'))
+    .catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); showToast('URL copiada!', 'success'); }
+      catch(e) { showToast('Falha ao copiar', 'error'); }
+      document.body.removeChild(ta);
+    });
+}
+
+function generateFullM3U() {
+  let out = '#EXTM3U\n';
+  allChannels.forEach(ch => {
+    out += `#EXTINF:-1 tvg-name="${ch.name}" tvg-logo="${ch.logo}" group-title="${ch.group}",${ch.name}\n`;
+    out += `${ch.url}\n`;
+  });
+  return out;
+}
+
+function exportM3U() {
+  if (allChannels.length === 0) {
+    showToast('Nenhum canal carregado', 'error');
+    return;
+  }
+  const content = generateFullM3U();
+  const blob = new Blob([content], { type: 'audio/x-mpegurl' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'brasiltv_completa.m3u';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`Lista M3U baixada com ${allChannels.length} canais!`, 'success');
+}
+
+function copyAllM3U() {
+  if (allChannels.length === 0) {
+    showToast('Nenhum canal carregado', 'error');
+    return;
+  }
+  const content = generateFullM3U();
+  navigator.clipboard.writeText(content)
+    .then(() => showToast(`Lista M3U completa copiada (${allChannels.length} canais)!`, 'success'))
+    .catch(() => showToast('Falha ao copiar', 'error'));
+}
+
+async function loadExternalM3U() {
+  const url = document.getElementById('m3uUrlInput').value.trim();
+  if (!url) {
+    showToast('Cole uma URL válida', 'error');
+    return;
+  }
+  
+  showToast('Carregando lista...', 'success');
+  const text = await loadM3UFromUrl(url);
+  
+  if (!text) {
+    showToast('Falha ao carregar lista', 'error');
+    return;
+  }
+  
+  const newChannels = parseM3U(text, 'Lista Customizada');
+  if (newChannels.length === 0) {
+    showToast('Nenhum canal encontrado na lista', 'error');
+    return;
+  }
+  
+  newChannels.forEach((ch, idx) => {
+    ch.id = allChannels.length + idx;
+  });
+  
+  allChannels = [...allChannels, ...newChannels];
+  renderAll();
+  showToast(`${newChannels.length} canais adicionados!`, 'success');
+  document.getElementById('m3uUrlInput').value = '';
+}
+
+function showToast(msg, type = 'success') {
   const toast = document.getElementById('toast');
   toast.className = 'toast ' + type;
   document.getElementById('toastMsg').textContent = msg;
   toast.classList.add('show');
   clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+  window._toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
 }
 
-function loadSettingsUI() {
-  document.getElementById('cfgApiKey').value = settings.apiKey || '';
-  document.getElementById('cfgBinId').value = settings.binId || '';
-  document.getElementById('cfgCustomM3U').value = settings.customM3U || '';
-  document.getElementById('toggleProxy').classList.toggle('on', settings.proxy !== false);
-  document.getElementById('toggleAutoPlay').classList.toggle('on', settings.autoPlay === true);
-  document.getElementById('toggleAutoSync').classList.toggle('on', settings.autoSync !== false);
+function renderGroups() {
+  const groupMap = {};
+  allChannels.forEach(ch => { 
+    groupMap[ch.group] = groupMap[ch.group] || 0; 
+    groupMap[ch.group]++; 
+  });
+  
+  const groups = Object.keys(groupMap).sort();
+  const el = document.getElementById('groupList');
+  
+  let html = `<div class="cat-item ${activeGroup === 'all' ? 'active' : ''}" data-group="all">
+    <span>Todos os Grupos</span><span class="cat-count">${allChannels.length}</span>
+  </div>`;
+  
+  groups.forEach(group => {
+    html += `<div class="cat-item ${activeGroup === group ? 'active' : ''}" data-group="${group}">
+      <span>${group}</span><span class="cat-count">${groupMap[group]}</span>
+    </div>`;
+  });
+  
+  el.innerHTML = html;
+  el.querySelectorAll('.cat-item').forEach(item => {
+    item.addEventListener('click', () => { 
+      activeGroup = item.dataset.group; 
+      renderAll(); 
+    });
+  });
 }
 
-document.querySelectorAll('.toggle').forEach(t => t.addEventListener('click', () => t.classList.toggle('on')));
+function renderCategories() {
+  const catMap = {};
+  allChannels.forEach(ch => { 
+    catMap[ch.subCat] = catMap[ch.subCat] || 0; 
+    catMap[ch.subCat]++; 
+  });
+  
+  const categories = Object.keys(catMap).sort();
+  const el = document.getElementById('catList');
+  
+  let html = `<div class="cat-item ${activeCategory === 'all' ? 'active' : ''}" data-cat="all">
+    <span>Todas as Categorias</span><span class="cat-count">${allChannels.length}</span>
+  </div>`;
+  
+  categories.forEach(cat => {
+    html += `<div class="cat-item ${activeCategory === cat ? 'active' : ''}" data-cat="${cat}">
+      <span>${cat}</span><span class="cat-count">${catMap[cat]}</span>
+    </div>`;
+  });
+  
+  el.innerHTML = html;
+  el.querySelectorAll('.cat-item').forEach(item => {
+    item.addEventListener('click', () => { 
+      activeCategory = item.dataset.cat; 
+      renderAll(); 
+    });
+  });
+}
 
-document.getElementById('saveSettingsBtn').addEventListener('click', () => {
-  settings.apiKey = document.getElementById('cfgApiKey').value.trim();
-  settings.binId = document.getElementById('cfgBinId').value.trim();
-  settings.customM3U = document.getElementById('cfgCustomM3U').value.trim();
-  settings.proxy = document.getElementById('toggleProxy').classList.contains('on');
-  settings.autoPlay = document.getElementById('toggleAutoPlay').classList.contains('on');
-  settings.autoSync = document.getElementById('toggleAutoSync').classList.contains('on');
-  localStorage.setItem('iptv_settings', JSON.stringify(settings));
-  rebuildChannels(); renderAll(); closeModal('settingsModal');
-  showToast('Configurações salvas!', 'success');
-});
-
-document.getElementById('clearDataBtn').addEventListener('click', () => {
-  if (confirm('Limpar todos os dados locais (favoritos, configurações)?')) {
-    localStorage.removeItem('iptv_favorites'); localStorage.removeItem('iptv_settings');
-    favorites = [];
-    settings = { apiKey: DEFAULT_API_KEY, binId: DEFAULT_BIN_ID, customM3U: '', proxy: true, autoPlay: false, autoSync: true };
-    rebuildChannels(); renderAll(); loadSettingsUI(); closeModal('settingsModal');
-    showToast('Dados limpos', 'success');
+function getFilteredChannels() {
+  let filtered = allChannels;
+  if (activeGroup !== 'all') filtered = filtered.filter(ch => ch.group === activeGroup);
+  if (activeCategory !== 'all') filtered = filtered.filter(ch => ch.subCat === activeCategory);
+  if (currentSearch) { 
+    const q = currentSearch.toLowerCase(); 
+    filtered = filtered.filter(ch => ch.name.toLowerCase().includes(q)); 
   }
-});
+  return filtered;
+}
 
-document.getElementById('syncBtn').addEventListener('click', performSync);
-document.getElementById('settingsBtn').addEventListener('click', () => { loadSettingsUI(); openModal('settingsModal'); });
-document.getElementById('closePlayer').addEventListener('click', closePlayerFn);
-document.getElementById('copyUrlBtn').addEventListener('click', copyCurrentUrl);
-document.getElementById('copyUrlBtn2').addEventListener('click', copyCurrentUrl);
+function renderChannels() {
+  const container = document.getElementById('channelList');
+  const filtered = getFilteredChannels();
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <p>Nenhum canal encontrado</p>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(ch => {
+    const logoHtml = ch.logo ? `<img src="${ch.logo}" alt="${ch.name}" onerror="this.parentElement.innerHTML='${getInitials(ch.name)}'">` : getInitials(ch.name);
+    const isPlaying = currentChannel && currentChannel.id === ch.id;
+    return `
+    <div class="channel-card ${isPlaying ? 'playing' : ''}">
+      <div class="ch-header">
+        <div class="ch-logo">${logoHtml}</div>
+        <div class="ch-info">
+          <div class="ch-name">${ch.name}</div>
+          <div class="ch-meta">
+            <span class="ch-tag cat">${ch.subCat}</span>
+            <span class="ch-tag group">${ch.group}</span>
+          </div>
+        </div>
+      </div>
+      <div class="ch-url-box">
+        <div class="ch-url-label">URL do Stream</div>
+        <div class="ch-url">${ch.url}</div>
+      </div>
+      <div class="ch-actions">
+        <button class="ch-btn play" onclick="playChannel(allChannels[${ch.id}])">▶ Assistir</button>
+        <button class="ch-btn primary" onclick="copyUrl('${ch.url.replace(/'/g, "\\'")}')">📋 Copiar URL</button>
+        <button class="ch-btn" onclick="window.open('${ch.url}', '_blank')">🔗 Abrir URL</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateHeader() {
+  let title = 'Todos os Canais';
+  if (activeGroup !== 'all') title = activeGroup;
+  if (activeCategory !== 'all') title += ` · ${activeCategory}`;
+  
+  document.getElementById('viewTitle').textContent = title;
+  const filtered = getFilteredChannels();
+  document.getElementById('viewSubtitle').textContent = `${filtered.length} canais disponíveis`;
+  document.getElementById('statTotal').textContent = allChannels.length;
+  document.getElementById('statCats').textContent = new Set(allChannels.map(c => c.subCat)).size;
+  document.getElementById('statGroups').textContent = new Set(allChannels.map(c => c.group)).size;
+}
+
+function renderAll() { 
+  renderGroups(); 
+  renderCategories(); 
+  renderChannels(); 
+  updateHeader(); 
+}
 
 let searchTimer;
 document.getElementById('searchInput').addEventListener('input', (e) => {
   clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => { currentSearch = e.target.value; renderGrid(); updateHeader(); }, 150);
+  searchTimer = setTimeout(() => { 
+    currentSearch = e.target.value; 
+    renderChannels(); 
+    updateHeader(); 
+  }, 150);
 });
 
-document.querySelectorAll('.view-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentView = btn.dataset.view;
-    const grid = document.getElementById('grid');
-    if (currentView === 'list') grid.classList.add('list-view'); else grid.classList.remove('list-view');
-  });
-});
+// Player controls
+document.getElementById('closePlayerBtn').addEventListener('click', closePlayer);
+document.getElementById('copyPlayerUrlBtn').addEventListener('click', copyCurrentUrl);
 
-document.querySelectorAll('.modal-backdrop').forEach(m => {
-  m.addEventListener('click', (e) => { if (e.target === m) m.classList.remove('show'); });
-});
-
-// ═══════════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════════
-rebuildChannels();
-renderAll();
-
-if (settings.autoSync !== false) {
-  setTimeout(() => {
-    cloudSync().then(record => {
-      if (record && record.favorites) {
-        favorites = record.favorites;
-        localStorage.setItem('iptv_favorites', JSON.stringify(favorites));
-        renderAll();
-      }
-    });
-  }, 800);
-} else {
-  setSyncStatus('online', 'Pronto · Auto-sync desativado');
+// Carrega lista padrão ao iniciar
+async function init() {
+  const text = await loadM3UFromUrl(DEFAULT_M3U_URL);
+  
+  if (text) {
+    allChannels = parseM3U(text, 'Lista IPTV Legal');
+    renderAll();
+    showToast(`${allChannels.length} canais carregados! Clique em ▶ Assistir para tentar reproduzir`, 'success');
+  } else {
+    document.getElementById('channelList').innerHTML = `
+      <div class="empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <p>Falha ao carregar lista padrão</p>
+        <p style="margin-top:8px; font-size:12px;">Adicione uma URL M3U manualmente</p>
+      </div>`;
+    document.getElementById('viewTitle').textContent = 'Erro ao Carregar';
+    document.getElementById('viewSubtitle').textContent = 'Adicione uma lista M3U manualmente';
+  }
 }
+
+init();
 </script>
 </body>
 </html>
